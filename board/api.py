@@ -42,7 +42,7 @@ class ServiceResource(ModelResource):
         authentication = SimpleAuthentication()
         authorization = DjangoAuthorization()
         filtering = {
-            "name": ALL,
+            "slug": ALL,
         }
 
     def dehydrate(self, bundle):
@@ -59,7 +59,7 @@ class StatusResource(ModelResource):
         authentication = SimpleAuthentication()
         authorization = DjangoAuthorization()
         filtering = {
-            "name": ALL,
+            "slug": ALL,
         }
 
 
