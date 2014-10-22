@@ -9,7 +9,7 @@ It is heavily based on [Stashboard](http://www.stashboard.org/). Unlike Stashboa
 Quick start guide
 -----------------
 
-    $ git clone git@github.com:sijis/whiskerboard.git
+    $ git clone git@github.com:jasonthomas/whiskerboard.git
     $ cd whiskerboard
     $ sudo pip install -r requirements.txt
     $ Add a "SECRET_KEY = 'EnterABunchOfRandomCharactersHere'" to settings/base.py
