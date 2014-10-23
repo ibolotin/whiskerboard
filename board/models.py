@@ -153,3 +153,11 @@ class Event(models.Model):
     class Meta:
         ordering = ('-start',)
         get_latest_by = 'start'
+
+
+def signals_import():
+    from django.contrib.auth.models import User
+    from tastypie.models import create_api_key
+    models.signals.post_save.connect(create_api_key, sender=User)
+
+signals_import()
