@@ -1,5 +1,15 @@
 from django.contrib import admin
 from board.models import Category, Service, Status, Event
+from tastypie.admin import ApiKeyInline
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+
+
+class UserModelAdmin(UserAdmin):
+    inlines = UserAdmin.inlines + [ApiKeyInline]
+
+admin.site.unregister(User)
+admin.site.register(User, UserModelAdmin)
 
 
 class CategoryAdmin(admin.ModelAdmin):
