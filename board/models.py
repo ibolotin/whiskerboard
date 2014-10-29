@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
 from django.db import models
+from colorfield.fields import ColorField
 
 
 class Category(models.Model):
@@ -132,7 +133,7 @@ class Status(models.Model):
     )
     severity = models.IntegerField(choices=SEVERITY_CHOICES)
     image = models.CharField(max_length=100)
-
+    color = ColorField()
     objects = StatusManager()
 
     class Meta:

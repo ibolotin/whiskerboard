@@ -1,5 +1,4 @@
 html, body { height: 100%; }
-body { font:12px arial,helvetica,verdana,sans-serif; background: rgb(240, 247, 247); }
 
 a { color:#333; text-decoration: none; }
 a:hover { color:#666; }
@@ -302,6 +301,7 @@ video {
   margin: 0;
   padding: 0;
   border: 0;
+  font-family: 'Open Sans Light';
 }
 article,
 aside,

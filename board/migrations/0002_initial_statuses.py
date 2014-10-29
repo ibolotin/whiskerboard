@@ -13,21 +13,24 @@ class Migration(DataMigration):
             slug="down",
             image="cross-circle",
             severity=40,
-            description="The service is currently down"
+            description="The service is currently down",
+            color="#FF0000"
         )
         orm.Status.objects.create(
             name="Up",
             slug="up",
             image="tick-circle",
             severity=10,
-            description="The service is up"
+            description="The service is up",
+            color="#00FF00"
         )
         orm.Status.objects.create(
             name="Warning",
             slug="warning",
             image="exclamation",
             severity=30,
-            description="The service is experiencing intermittent problems"
+            description="The service is experiencing intermittent problems",
+            color="#FFFF00"
         )
 
     def backwards(self, orm):
@@ -57,7 +60,8 @@ class Migration(DataMigration):
             'image': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'severity': ('django.db.models.fields.IntegerField', [], {}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'})
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'db_index': 'True'}),
+            'color': ('colorfield.fields.ColorField', [], {}),
         }
     }
 

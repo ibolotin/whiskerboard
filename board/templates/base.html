@@ -10,13 +10,25 @@
     <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet" />
   </head>
   <body>
-    <a href="/en-US/" id="tabzilla">mozilla</a>
+        <header id="masthead">
+          <a href="/en-US/" id="tabzilla">mozilla</a>
+          <nav id="nav-main" role="navigation">
+              <ul>
+                  <li><a href="//mozilla.org/mission/">FIXME</a></li>
+                  <li><a href="//mozilla.org/about/">FIXME</a></li>
+                  <li><a href="//mozilla.org/products/">FIXME</a></li>
+                  <li><a href="//mozilla.org/contribute/">FIXME</a></li>
+              </ul>
+          </nav>
+        </header>
+
     <div id="wrapper">
       <div id="header">
         <img id="logo" src="{{ STATIC_URL }}images/logo.png" alt="Logo">
         <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
         <h1 id="title"><a href="/">{{ current_site.name }}</a></h1>
       </div>
+      <div style="border: 3px solid green; border-radius: 2px;" id="FIXME_DESCRIPTION_BLURB">DEATH FROM ABOVE</div>
       <div id="content">
         {% block content %}
         {% endblock %}

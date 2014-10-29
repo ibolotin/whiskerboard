@@ -27,7 +27,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'south',
     'board',
-    'tastypie',
+    'colorfield',
+    'tastypie'
 )
 
 MIDDLEWARE_CLASSES = (

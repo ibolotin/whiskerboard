@@ -26,6 +26,7 @@ class Migration(SchemaMigration):
             ('description', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('severity', self.gf('django.db.models.fields.IntegerField')()),
             ('image', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('color', self.gf('colorfield.fields.ColorField')()),
         ))
         db.send_create_signal('board', ['Status'])
 
