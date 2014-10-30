@@ -33,13 +33,13 @@ class Api():
         print(data)
 
 # set categories / services
-fx = {
-    "name": "Firefox Services",
-    "slug": "firefox-services",
-    "description": "Services supporting the Firefox browser"
+mz = {
+    "name": "Mozilla Services",
+    "slug": "mozilla-services",
+    "description": "Services supporting the Firefox browser and others"
 }
 
-fx_services = [
+mz_services = [
     {
         "name": "Firefox Accounts",
         "slug": "fxa",
@@ -57,35 +57,18 @@ fx_services = [
         "slug": "fx-sync",
         "description": "The Firefox Sync Service",
         "category": "/api/v1/categories/1/",
-    }
-]
-
-mz = {
-    "name": "Mozilla Services",
-    "slug": "mozilla-services",
-    "description": "Other Mozilla services"
-}
-
-mz_services = [
-    {
-        "name": "APK Factory",
-        "slug": "apk",
-        "description": "The APK Factory Service",
-        "category": "/api/v1/categories/2/",
     },
     {
         "name": "Mozilla Location Service",
         "slug": "location",
         "description": "The Mozilla Location Service",
-        "category": "/api/v1/categories/2/",
+        "category": "/api/v1/categories/1/",
     }
 ]
 
 if __name__ == "__main__":
     api = Api(sys.argv[1], sys.argv[2])
 
-    api.post('/api/v1/categories/', fx)
     api.post('/api/v1/categories/', mz)
-
-    for svc in fx_services + mz_services:
+    for svc in mz_services:
         api.post('/api/v1/services/', svc)
