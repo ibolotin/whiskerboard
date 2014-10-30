@@ -18,9 +18,8 @@
     <tbody id="services-body">
     {% for service in category.list %}
       <tr>
-        <td><a href="{{ service.get_absolute_url }}{{ service.events.latest.start|date:"/Y/m/d" }}">{{ service.name }}</a></td>
+        <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a></td>
         <td class="status highlight">
-          <!-- <a href="{{ service.get_absolute_url }}{{ service.events.latest.start|date:"/Y/m/d" }}"> -->
           {% with service.events.latest.status as latest_status %}
           {% if latest_status %}
           <font color="{{ latest_status.color }}">{{ latest_status.description }}</font>
