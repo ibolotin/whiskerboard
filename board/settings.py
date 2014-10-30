@@ -143,4 +143,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.contrib.messages.context_processors.messages",
     'board.context_processors.current_site',
+    'board.context_processors.bugzilla_url',
 )
+
+BUGZILLA_URL = 'https://bugzilla.mozilla.org/enter_bug.cgi?product=Mozilla%20Services'
