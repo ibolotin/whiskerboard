@@ -27,6 +27,7 @@ class Service(models.Model):
     slug = models.SlugField()
     description = models.CharField(max_length=255)
     category = models.ForeignKey(Category, related_name='services', null=True)
+    url = models.URLField(null=True)
 
     class Meta:
         ordering = ('name',)

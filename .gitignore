@@ -4,3 +4,4 @@ static_root/
 .*.sw*
 .DS_Store
 whiskerboard.sqlite3
+*venv*
