@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
 from django.db import models
+from colorfield.fields import ColorField
 
 
 class Category(models.Model):
@@ -26,6 +27,7 @@ class Service(models.Model):
     slug = models.SlugField()
     description = models.CharField(max_length=255)
     category = models.ForeignKey(Category, related_name='services', null=True)
+    url = models.URLField(null=True)
 
     class Meta:
         ordering = ('name',)
@@ -114,7 +116,7 @@ class Service(models.Model):
 
 class StatusManager(models.Manager):
     def default(self):
-        return self.get_query_set().filter(severity=10)[0]
+        return self.get_queryset().filter(severity=10)[0]
 
 
 class Status(models.Model):
@@ -132,7 +134,7 @@ class Status(models.Model):
     )
     severity = models.IntegerField(choices=SEVERITY_CHOICES)
     image = models.CharField(max_length=100)
-
+    color = ColorField()
     objects = StatusManager()
 
     class Meta:
