@@ -10,11 +10,12 @@ class Migration(migrations.Migration):
         Status = apps.get_model("board", "Status")
         Status.objects.bulk_create([
             Status(name="Up", slug="up", image="tick-circle", severity=10,
-                   description="The service is up"),
+                   color="#33CC33", description="The service is up"),
             Status(name="Down", slug="down", image="cross-circle", severity=40,
+                   color="#FF0000",
                    description="The service is currently down"),
             Status(name="Warning", slug="warning", image="exclamation",
-                   severity=30,
+                   color="#FFFF66", severity=30,
                    description="The service is experiencing problems"),
         ])
 
