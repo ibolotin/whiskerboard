@@ -42,10 +42,9 @@ class ServiceView(BoardMixin, DetailView):
 
         data = get_object_or_404(self.model, slug=slug)
 
-        start_date = datetime.date.today()
-        end_date = start_date + datetime.timedelta(days=days)
+        start_date = datetime.date.today() - datetime.timedelta(days=days)
 
-        events = data.events.filter(start__gte=start_date).filter(start__lt=end_date)
+        events = data.events.filter(start__gte=start_date)
 
         no_events = None
         if len(events) == 0:
