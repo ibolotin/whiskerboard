@@ -1,16 +1,18 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% block title %}{{ service.name }} | {{ block.super }}{% endblock %}
 {% block content %}
-<div id="webservices" class="frame">
-  <h2>{{ service.name }}</h2>
+<div id="webservices" class="center frame">
+  <h1>{{ service.name }}</h1>
   <p id="service-desc">{{ service.description|safe }}</p>
+
   <h3 class="date-range">
     {% if start_date %}
       {{ start_date|date:"n/j/Y"  }}
     {% endif %}
   </h3>
 
-  <table class="event-log" cellpadding="10">
+  <table style="font-size: 24px; width:100%;" class="table event-log" cellpadding="10">
     <thead>
       <tr>
         <th class="time-header">Time</th>
@@ -24,9 +26,9 @@
         <td>{{ e.start|date:"N j, fA T" }}</td>
         <td class="status highlight">
           {% if e.informational %}
-            <img src="{{ STATIC_URL }}images/status/information.png" alt="Information">
+            <img src="{% static 'images/status/information.png' %}" alt="Information">
           {% else %}
-            <img src="{{ STATIC_URL }}images/status/{{ e.status.image }}.png" alt="{{ e.status.name }}">
+            <img src="{% static 'images/status/' %}{{ e.status.image }}.png" alt="{{ e.status.name }}">
           {% endif %}
         </td>
         <td>{{ e.message|safe }}</td>
@@ -39,5 +41,6 @@
       {% endif %}
     </tbody>
   </table>
+  <h2>System Metrics</h2> day week month
 </div>
 {% endblock %}

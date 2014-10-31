@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% block content %}
 {% regroup services|dictsort:"category.name" by category as category_list %}
 <div id="webservices" class="">
@@ -22,13 +23,12 @@
           {% with service.events.latest.status as latest_status %}
           {% if latest_status %}
           <font color="{{ latest_status.color }}">{{ latest_status.description }}</font>
-          <!-- <img src="{{ STATIC_URL }}images/status/{{ latest_status.image }}.png" alt="{{ latest_status }} "/> -->
+          <!-- <img src="{% static 'images/status/' %}{{ latest_status.image }}.png" alt="{{ latest_status }} "/> -->
           {% else %}
           <font color="{{ default.color }}">{{ default.description }}</font>
-          <!-- <img src="{{ STATIC_URL }}images/status/{{ default.image }}.png" alt="{{ default.name }} "/> -->
+          <!-- <img src="{% static 'images/status/' %}{{ default.image }}.png" alt="{{ default.name }} "/> -->
           {% endif %}
           {% endwith %}
-          <!-- </a> -->
         </td>
       </tr>
     {% endfor %}

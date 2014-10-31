@@ -1,4 +1,5 @@
 {% load url from future %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html class="windows no-js" lang="en">
     <head>
@@ -8,7 +9,7 @@
         <!-- <title>{% block title %}{{ current_site.name }}{% endblock %}</title> -->
         <title>Mozilla - Cloud Services Status Page</title>
 
-        <link rel="shortcut icon" href="/static/media/img/favicon.ico" />
+        <link rel="shortcut icon" href="{% static 'media/img/favicon.ico' %}" />
         <link rel="stylesheet" type="text/css" href="//www.mozilla.org/tabzilla/media/css/tabzilla.css" media="screen" />
         <link rel="alternate" type="application/atom+xml" title="Latest status updates." href="{% url 'feed' %}">
 
@@ -16,7 +17,7 @@
         <script src="[YOUR_ASSET_FOLDER]/js/libs/html5shiv.js"></script>
         <![endif]-->
 
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/sandstone/sandstone-resp.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/sandstone/sandstone-resp.css' %}" media="screen" />
     </head>
     <!-- The four different themes of sandstone are, stone, sand, sky, space. Replace the class on the
          body tag below, with the theme you wish to use for your project -->
@@ -34,17 +35,15 @@
                             <li role="menuitem" class="last"><a href="//www.mozilla.org/en-US/contribute/">Get Involved</a></li>
                         </ul>
                     </nav>
-                    <h2><a href="#"><img src="{{ STATIC_URL }}media/img/sandstone/header-mozilla-stone.png" alt="mozilla"></a></h2>
+                    <h2><a href="//mozilla.org"><img src="{% static 'media/img/sandstone/header-mozilla-stone.png' %}" alt="mozilla"></a></h2>
                 </header>
                 <!-- this will sadly need to be replaced -->
                 <style type="text/css">
-                 #main-feature { background-position: 95% 60%; background-repeat: no-repeat; background-image: url({{ STATIC_URL }}images/logo.png); }
+                 #main-feature { background-position: 95% 60%; background-repeat: no-repeat; background-image: url({% static 'images/logo.png' %}); }
                 </style>
 
                 <hgroup id="main-feature" class="large">
-                  <!-- FIXME -->
-                  <br>
-                  <h1>{{ current_site.name }}</h1>
+                  <h1><a href="/" style="text-decoration: none;">{{ current_site.name }}</a></h1>
                   <h2>DEATH FROM ABOVE</h2>
                 </hgroup>
 
@@ -106,7 +105,7 @@
         </div>
         {% block js %}
         <script src="//www.mozilla.org/tabzilla/media/js/tabzilla.js"></script>
-        <script src="/static/js/site.js"></script>
+        <script src="{% static 'js/site.js' %}"></script>
         {% endblock %}
     </body>
 </html>
