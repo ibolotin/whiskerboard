@@ -24,13 +24,20 @@ class Api():
             'Accept': '*/*'
         }
 
-    def post(self, endpoint, params):
+    def use(self, method, endpoint, params):
         params = json.dumps(params)
-        self.conn.request('POST', endpoint, params, self.headers)
+        self.conn.request(method, endpoint, params, self.headers)
         response = self.conn.getresponse()
         data = response.read()
         print(response.status, response.reason)
         print(data)
+
+    def post(self, endpoint, params):
+        self.use("POST", endpoint, params)
+
+    def put(self, endpoint, params):
+        self.use("PUT", endpoint, params)
+
 
 # set categories / services
 mz = {
@@ -69,6 +76,10 @@ mz_services = [
 if __name__ == "__main__":
     api = Api(sys.argv[1], sys.argv[2])
 
+    api.put('/api/v1/sites/1/', {
+        "domain": "mozilla.org",
+        "name": "Mozilla Cloud Services Status Page"
+    })
     api.post('/api/v1/categories/', mz)
     for svc in mz_services:
         api.post('/api/v1/services/', svc)

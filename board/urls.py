@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from board.feeds import EventFeed
 from board.views import IndexView, ServiceView
-from board.api import ServiceResource, CategoryResource, StatusResource, EventsResource
+from board.api import ServiceResource, CategoryResource, StatusResource, EventsResource, SiteResource
 from tastypie.api import Api
 from django.contrib import admin
 
@@ -12,6 +12,7 @@ v1_api.register(ServiceResource())
 v1_api.register(CategoryResource())
 v1_api.register(StatusResource())
 v1_api.register(EventsResource())
+v1_api.register(SiteResource())
 
 urlpatterns = patterns('',
                        url(r'^$', IndexView.as_view(), name='index'),

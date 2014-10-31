@@ -1,6 +1,7 @@
 from tastypie import fields
 from tastypie.resources import ModelResource
 from board.models import Service, Category, Status, Event
+from django.contrib.sites.models import Site
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import DjangoAuthorization
@@ -71,6 +72,15 @@ class EventsResource(ModelResource):
     class Meta:
         queryset = Event.objects.all()
         resource_name = 'events'
+        excludes = ['id']
+        authentication = SimpleAuthentication()
+        authorization = DjangoAuthorization()
+
+
+class SiteResource(ModelResource):
+    class Meta:
+        queryset = Site.objects.all()
+        resource_name = 'sites'
         excludes = ['id']
         authentication = SimpleAuthentication()
         authorization = DjangoAuthorization()
