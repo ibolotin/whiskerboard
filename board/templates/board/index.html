@@ -1,20 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 {% regroup services|dictsort:"category.name" by category as category_list %}
-<div id="webservices" class="frame">
+<div id="webservices" class="">
   {% for category in category_list %}
   <h2 class="category"><!-- {{ category.grouper.name }}--></h2>
   <div class="category-desc">
       <!--{{ category.grouper.description|safe }} -->
   </div>
-  <table id="service-list">
+  <table style="font-size: 30px; width:100%; margin-left:auto; margin-right:auto;" id="service-list" class="table">
     <thead>
       <tr>
         <th>Service</th>
-        <th class="today">Current</th>
+        <th>State</th>
       </tr>
     </thead>
-
     <tbody id="services-body">
     {% for service in category.list %}
       <tr>

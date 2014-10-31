@@ -1,56 +1,112 @@
 {% load url from future %}
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>{% block title %}{{ current_site.name }}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" type="text/css" media="screen">
-    <link rel="stylesheet" href="{{ STATIC_URL}}css/style.css" type="text/css" media="screen">
-    <link rel="alternate" type="application/atom+xml" title="Latest status updates." href="{% url 'feed' %}">
-    <link href="//mozorg.cdn.mozilla.net/media/css/tabzilla-min.css" rel="stylesheet" />
-  </head>
-  <body>
-        <header id="masthead">
-          <a href="/en-US/" id="tabzilla">mozilla</a>
-          <!--
-          <nav id="nav-main" role="navigation">
-              <ul>
-                  <li><a href="//mozilla.org/mission/">FIXME</a></li>
-                  <li><a href="//mozilla.org/about/">FIXME</a></li>
-                  <li><a href="//mozilla.org/products/">FIXME</a></li>
-                  <li><a href="//mozilla.org/contribute/">FIXME</a></li>
-              </ul>
-            -->
-          </nav>
-        </header>
+<html class="windows no-js" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <div id="wrapper">
-      <div id="header">
-        <img id="logo" src="{{ STATIC_URL }}images/logo.png" alt="Logo">
-        <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
-        <h1 id="title"><a href="/">{{ current_site.name }}</a></h1>
-      </div>
-      <!-- <div style="border: 3px solid green; border-radius: 2px;" id="FIXME_DESCRIPTION_BLURB">DEATH FROM ABOVE</div> -->
-      <div id="content">
-        {% block content %}
+        <!-- <title>{% block title %}{{ current_site.name }}{% endblock %}</title> -->
+        <title>Mozilla - Cloud Services Status Page</title>
+
+        <link rel="shortcut icon" href="/static/media/img/favicon.ico" />
+        <link rel="stylesheet" type="text/css" href="//www.mozilla.org/tabzilla/media/css/tabzilla.css" media="screen" />
+        <link rel="alternate" type="application/atom+xml" title="Latest status updates." href="{% url 'feed' %}">
+
+        <!--[if lte IE 8]>
+        <script src="[YOUR_ASSET_FOLDER]/js/libs/html5shiv.js"></script>
+        <![endif]-->
+
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/sandstone/sandstone-resp.css" media="screen" />
+    </head>
+    <!-- The four different themes of sandstone are, stone, sand, sky, space. Replace the class on the
+         body tag below, with the theme you wish to use for your project -->
+    <body class="sky">
+        <div id="outer-wrapper">
+            <div id="wrapper">
+                <header id="masthead">
+                    <a href="http://www.mozilla.org/" id="tabzilla">Mozilla</a>
+                    <nav id="nav-main" role="menubar">
+                        <span class="toggle" role="button" aria-controls="nav-main-menu" tabindex="0">Menu</span>
+                        <ul role="menu" id="nav-main-menu">
+                            <li role="menuitem" class="first"><a href="//www.mozilla.org/en-US/mission/">Mission</a></li>
+                            <li role="menuitem"><a href="//www.mozilla.org/en-US/about/">About</a></li>
+                            <li role="menuitem"><a href="//www.mozilla.org/en-US/products/">Products</a></li>
+                            <li role="menuitem" class="last"><a href="//www.mozilla.org/en-US/contribute/">Get Involved</a></li>
+                        </ul>
+                    </nav>
+                    <h2><a href="#"><img src="{{ STATIC_URL }}media/img/sandstone/header-mozilla-stone.png" alt="mozilla"></a></h2>
+                </header>
+                <!-- this will sadly need to be replaced -->
+                <style type="text/css">
+                 #main-feature { background-position: 95% 60%; background-repeat: no-repeat; background-image: url({{ STATIC_URL }}images/logo.png); }
+                </style>
+
+                <hgroup id="main-feature" class="large">
+                  <!-- FIXME -->
+                  <br>
+                  <h1>{{ current_site.name }}</h1>
+                  <h2>DEATH FROM ABOVE</h2>
+                </hgroup>
+
+                <div id="content">
+                  {% block content %}
+                  {% endblock %}
+                </div>
+                  <!-- FIXME -->
+                <br>
+                <nav class="menu-bar billboard">
+                  <a href="{{ bugzilla_url }}" target=_blank">Have a problem? Report it</a>
+                </nav>
+            </div>
+
+            <footer id="colophon" class="">
+              <nav class="row">
+                <div class="col col-1">
+                  <h1 class="logo"><a href="/en-US/">Mozilla</a></h1>
+                  <p class="license">Portions of this content are &copy;1998–2014 by individual mozilla.org contributors. Content available under a <a href="/en-US/foundation/licensing/website-content/">Creative Commons license</a>.</p>
+                </div>
+                <div class="col col-2">
+                  <ul class="links-join">
+                    <li><a href="/en-US/contact/spaces/">Contact Us</a></li>
+                    <li class="wrap"><a href="/en-US/about/partnerships/">Partner with Us</a></li>
+                    <li class="clear"><a href="//sendto.mozilla.org/page/contribute/Give-Now" class="donate">Donate</a></li>
+                    <li class="wrap"><a href="//affiliates.mozilla.org/">Firefox Affiliates</a></li>
+                    <li class="clear"><a href="/en-US/contribute/page/">Contribute to this page</a></li>
+                  </ul>
+                  <ul class="links-legal">
+                    <li><a href="/en-US/privacy/">Privacy</a></li>
+                    <li class="wrap"><a href="/en-US/privacy/websites/#cookies">Cookies</a></li>
+                    <li class="wrap"><a href="/en-US/about/legal/">Legal</a></li>
+                    <li class="clear"><a href="/en-US/about/legal/fraud-report/">Report Trademark Abuse</a></li>
+                  </ul>
+                </div>
+                <div class="col col-3">
+                  <ul class="links-social">
+                    <li>
+                      Mozilla:
+                      <ul>
+                        <li><a href="//twitter.com/mozilla">Twitter<span> (@mozilla)</span></a></li>
+                        <li><a href="//www.facebook.com/mozilla">Facebook<span> (Mozilla)</span></a></li>
+                      </ul>
+                    </li>
+                    <li>
+                      Firefox:
+                      <ul>
+                        <li><a href="//twitter.com/firefox">Twitter<span> (@firefox)</span></a></li>
+                        <li><a href="//www.facebook.com/Firefox">Facebook<span> (Firefox)</span></a></li>
+                        <li><a href="//www.youtube.com/firefoxchannel">YouTube<span> (firefoxchannel)</span></a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <div class="lang-switcher">
+                  </div>
+                </div>
+              </nav>
+            </footer>
+        </div>
+        {% block js %}
+        <script src="//www.mozilla.org/tabzilla/media/js/tabzilla.js"></script>
+        <script src="/static/js/site.js"></script>
         {% endblock %}
-      </div>
-      <div align='center'>
-      <a href="{{ bugzilla_url }}" target=_blank">Have a problem? Report it</a>
-      </div>
-      <div id="push"></div>
-    </div>
-    <div id="footer">
-      <ul class="left">
-        <li id="icons">Icons by <a href="http://p.yusukekamiyamane.com/">Yusuke Kamiyamane</a></li>
-      </ul>
-      <ul class="right">
-        <li id="powered">Powered by <a href="http://github.com/sijis/whiskerboard">Whiskerboard</a>, based on <a href="http://www.stashboard.org">Stashboard</a></li>
-      </ul>
-    </div>
-    {% block js %}
-    <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
-    {% endblock %}
-  </body>
+    </body>
 </html>
-

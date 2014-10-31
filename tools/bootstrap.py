@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     api.put('/api/v1/sites/1/', {
         "domain": "mozilla.org",
-        "name": "Mozilla Cloud Services Status Page"
+        "name": "Cloud Services Status Page"
     })
     api.post('/api/v1/categories/', mz)
     for svc in mz_services:
