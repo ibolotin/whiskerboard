@@ -1,46 +1,93 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-{% block title %}{{ service.name }} | {{ block.super }}{% endblock %}
+{% block page_title_prefix %}{{ service.name }} — {% endblock %}
+{% block page_title_suffix %} — Mozilla{% endblock %}
+
+{% block css %}
+{{ block.super }}
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <link href="{% static 'css/metrics-graphics/metrics-graphics.css' %}" rel="stylesheet" type="text/css" id="light">
+    <link href="" rel="stylesheet" type="text/css" id="dark">
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js" charset="utf-8"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/metrics-graphics/metrics-graphics.min.js' %}"></script>
+    <script src="{% static 'js/metrics-graphics/main.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <div id="webservices" class="center frame">
-  <h1>{{ service.name }}</h1>
-  <p id="service-desc">{{ service.description|safe }}</p>
+    <h1>{{ service.name }}</h1>
+    <p id="service-desc">{{ service.description|safe }}</p>
 
-  <h3 class="date-range">
-    {% if start_date %}
-      {{ start_date|date:"n/j/Y"  }}
-    {% endif %}
-  </h3>
+    <h3 class="date-range">
+        {% if start_date %}
+            {{ start_date|date:"n/j/Y"  }}
+        {% endif %}
+    </h3>
 
-  <table style="font-size: 24px; width:100%;" class="table event-log" cellpadding="10">
-    <thead>
-      <tr>
-        <th class="time-header">Time</th>
-        <th class="status-header">Status</th>
-        <th>Message</th>
-      </tr>
-    </thead>
-    <tbody id="events-tbody">
-      {% for e in events %}
-      <tr>
-        <td>{{ e.start|date:"N j, fA T" }}</td>
-        <td class="status highlight">
-          {% if e.informational %}
-            <img src="{% static 'images/status/information.png' %}" alt="Information">
-          {% else %}
-            <img src="{% static 'images/status/' %}{{ e.status.image }}.png" alt="{{ e.status.name }}">
-          {% endif %}
-        </td>
-        <td>{{ e.message|safe }}</td>
-      </tr>
-      {% endfor %}
-      {% if no_events %}
-      <tr>
-        <td colspan="3"><h1>{{ no_events }}</h1></td>
-      </tr>
-      {% endif %}
-    </tbody>
-  </table>
-  <h2>System Metrics</h2> day week month
+    <table style="font-size: 24px; width:100%;" class="table event-log" cellpadding="10">
+        <thead>
+            <tr>
+                <th class="time-header">Time</th>
+                <th class="status-header">Status</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody id="events-tbody">
+            {% for e in events %}
+            <tr>
+                <td>{{ e.start|date:"N j, fA T" }}</td>
+                <td class="status highlight">
+                    {% if e.informational %}
+                    <img src="{% static 'images/status/information.png' %}" alt="Information">
+                    {% else %}
+                    <img src="{% static 'images/status/' %}{{ e.status.image }}.png" alt="{{ e.status.name }}">
+                    {% endif %}
+                </td>
+                <td>{{ e.message|safe }}</td>
+            </tr>
+            {% endfor %}
+            {% if no_events %}
+            <tr>
+                <td colspan="3"><h1>{{ no_events }}</h1></td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <!-- FIXME -->
+    <style type="text/css">.btn-default { background-color: #eeeeee; }</style>
+
+    <h1 style="margin-top: 50px;"><span style="float: left">System Metrics</span>
+        <div style="float: right" class="btn-group btn-group-sm text-center
+             modify-time-period-controls">
+            <button type="button" class="btn btn-default active"
+                    data-time_period="2">Past Day</button>
+            <button type="button" class="btn btn-default"
+                    data-time_period="7">Past Week</button>
+            <button type="button" class="btn btn-default"
+                    data-time_period="30">Past Month</button>
+        </div>
+    </h1>
+
+    <div style="margin-top: 100px;" id="container">
+    <div>
+        <div id="metric1"></div>
+    </div>
+    <div>
+        <div id="metric2"></div>
+    </div>
+    <div>
+        <div id="metric3"></div>
+    </div>
 </div>
+</html>
+
 {% endblock %}
