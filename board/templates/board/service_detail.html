@@ -31,12 +31,17 @@
 <div id="webservices" class="center frame">
     <h1 class="large">{{ service.name }}</h1>
     <p id="service-desc">{{ service.description|safe }}</p>
-    <div class="billboard">
+    {% if no_events %}
+    <div style="background: green; box-shadow: 0 0 0 1px black inset; padding: 6px; border-radius: 10px; cursor: pointer;" class="billboard">
+    {% else %}
+    <div style="background: {{ events.0.status.color }}; box-shadow: 0 0 0 1px black inset; padding: 20px; border-radius: 10px; cursor: pointer;" class="billboard">
+    {% endif %}
+
         {% if no_events %}
         <!-- FIXME -->
-        <h3><font color="green">The service is up</font></h3>
+        <h2><font color="white">The service is up</font></h2><font class="small" style="float: right" color="white">refreshed X minutes ago</font>
         {% else %}
-        <h3><font color="{{ events.0.status.color }}">{{ events.0.status.description }}</font></h3>
+        <h2><font color="white">{{ events.0.status.description }}</font></h2><font class="small" style="float: right" color="white">updated X minutes ago</font>
         {% endif %}
     </div>
     <h3 class="date-range">
