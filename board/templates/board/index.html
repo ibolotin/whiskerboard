@@ -19,33 +19,32 @@
     {% for service in category.list %}
     <tr>
       <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a>&nbsp;<span class='circlequestion' title='{{ service.long_description }}'></span></td>
-        <td class="status highlight">
-          {% with service.events.latest.status as latest_status %}
-          {% if latest_status %}
-          <font color="{{ latest_status.color }}">{{ latest_status.description }}</font>
-          <!-- <img src="{% static 'images/status/' %}{{ latest_status.image }}.png" alt="{{ latest_status }} "/> -->
-          {% else %}
-          <font color="{{ default.color }}">{{ default.description }}</font>
-          <!-- <img src="{% static 'images/status/' %}{{ default.image }}.png" alt="{{ default.name }} "/> -->
-          {% endif %}
-          {% endwith %}
-        </td>
-      </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+      <td class="status highlight">
+        {% with service.events.latest.status as latest_status %}
+        {% if latest_status %}
+        <font color="{{ latest_status.color }}">{{ latest_status.description }}</font>
+        <!-- <img src="{% static 'images/status/' %}{{ latest_status.image }}.png" alt="{{ latest_status }} "/> -->
+        {% else %}
+        <font color="{{ default.color }}">{{ default.description }}</font>
+        <!-- <img src="{% static 'images/status/' %}{{ default.image }}.png" alt="{{ default.name }} "/> -->
+        {% endif %}
+        {% endwith %}
+      </td>
+    </tr>
     {% endfor %}
-
-    <h2>Recent Events</h2>
-    {% regroup events by service as events_list %}
-    {% for service in events_list %}
-    <h4>{{ service.grouper }}</h4>
-    {% for item in service.list %}
-    <p>{{ item.start|date:"N j, fA T" }}: {{ item.message|safe }}</p>
-    {% endfor %}
-    {% empty %}
-    <p>No events found</p>
-    {% endfor %}
-  </div>
+    </tbody>
+  </table>
+  {% endfor %}
+  <br>
+  <h2>Recent Events</h2>
+  {% regroup events by service as events_list %}
+  {% for service in events_list %}
+  <h4>{{ service.grouper }}</h4>
+  {% for item in service.list %}
+  <p>{{ item.start|date:"N j, fA T" }}: {{ item.message|safe }}</p>
+  {% endfor %}
+  {% empty %}
+  <p>No events found</p>
+  {% endfor %}
 </div>
 {% endblock %}
