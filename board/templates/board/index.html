@@ -18,7 +18,7 @@
     <tbody id="services-body">
     {% for service in category.list %}
       <tr>
-        <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a></td>
+          <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a>&nbsp;<span class='circlequestion' title='{{ service.description }}'></td>
         <td class="status highlight">
           {% with service.events.latest.status as latest_status %}
           {% if latest_status %}
