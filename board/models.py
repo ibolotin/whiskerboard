@@ -28,6 +28,7 @@ class Service(models.Model):
     description = models.CharField(max_length=255)
     category = models.ForeignKey(Category, related_name='services', null=True)
     url = models.URLField(null=True)
+    long_description = models.CharField(max_length=255, null=True)
 
     class Meta:
         ordering = ('name',)
