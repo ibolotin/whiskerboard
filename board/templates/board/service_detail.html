@@ -17,13 +17,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js" charset="utf-8"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/metrics-graphics/metrics-graphics.min.js' %}"></script>
+    <script src="{% static 'js/metrics-graphics/metrics-graphics.js' %}"></script>
     <script src="{% static 'js/metrics-graphics/main.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 <div id="webservices" class="center frame">
-    <h1>{{ service.name }}</h1>
+    <h1 class="large">{{ service.name }}</h1>
     <p id="service-desc">{{ service.description|safe }}</p>
 
     <h3 class="date-range">
@@ -62,18 +62,14 @@
         </tbody>
     </table>
 
-    <!-- FIXME -->
-    <style type="text/css">.btn-default { background-color: #eeeeee; }</style>
-
     <h1 style="margin-top: 50px;"><span style="float: left">System Metrics</span>
-        <div style="float: right" class="btn-group btn-group-sm text-center
-             modify-time-period-controls">
-            <button type="button" class="btn btn-default active"
-                    data-time_period="2">Past Day</button>
-            <button type="button" class="btn btn-default"
-                    data-time_period="7">Past Week</button>
-            <button type="button" class="btn btn-default"
-                    data-time_period="30">Past Month</button>
+        <div style="float: right" class="button-list small text-center modify-time-period-controls">
+            <button type="button" class="button active"
+                        data-time_period="1">Day</button>
+            <button type="button" class="button"
+                        data-time_period="7">Week</button>
+            <button type="button" class="button"
+                    data-time_period="30">Month</button>
         </div>
     </h1>
 

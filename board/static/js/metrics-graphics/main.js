@@ -1,5 +1,45 @@
 'use strict';
 
+// FIXME make this intelligent
+// right now just assume 4 points per day
+function modify_time_period(data, past_n_days) {
+    past_n_days *= 4;
+    //splice time period
+    var data_spliced = clone(data);
+    if(past_n_days != '') {
+        for(var i=0; i<data_spliced.length; i++) {
+            var from = data_spliced[i].length - past_n_days;
+            data_spliced[i].splice(0,from);
+        }
+    }
+
+    return data_spliced;
+}
+
+function xax_format(n) {
+    var fmt = '%b %d';
+    if (n == 1) {
+        fmt = '%H:%M';
+    }
+
+    return function(d) {
+        console.log(d);
+        var df = d3.time.format(fmt);
+        console.log(df(d));
+        return df(d);
+    };
+}
+
+function convert_dates(data, x_accessor) {
+    data = data.map(function(d) {
+        var fff = d3.time.format('%Y-%m-%d %H:%M:%S');
+        d[x_accessor] = fff.parse(d[x_accessor]);
+        return d;
+    });
+
+    return data;
+}
+
 $(document).ready(function() {
     //json data that we intend to update later on via on-screen controls
     var wa, mrta, mrtw;
@@ -45,6 +85,7 @@ $(document).ready(function() {
             title: "Website Availability",
             description: "Here is an example that shows percentages.",
             data: uptime,
+            linked: true,
             width: torso.width*2,
             height: torso.height,
             right: torso.right,
@@ -53,12 +94,14 @@ $(document).ready(function() {
             format: 'percentage',
             target: '#metric1',
             x_accessor: 'date',
+            xax_format: xax_format(1),
             y_accessor: 'value'
         });
         moz_chart({
             title: "Website Availability",
             description: "Here is an example that shows percentages.",
-            data: modify_time_period(wa, 2),
+            data: modify_time_period(wa, 1),
+            linked: true,
             width: torso.width*2,
             height: torso.height,
             right: torso.right,
@@ -67,6 +110,7 @@ $(document).ready(function() {
             format: 'percentage',
             target: '#metric1',
             x_accessor: 'date',
+            xax_format: xax_format(1),
             y_accessor: 'value'
         });
 
@@ -83,12 +127,14 @@ $(document).ready(function() {
             xax_count: 4,
             target: '#metric2',
             x_accessor: 'date',
-            y_accessor: 'value'
+            xax_format: xax_format(1),
+            y_accessor: 'value',
+            y_label: 'ms'
         });
         moz_chart({
             title: "Mean Request Time (API)",
             description: "Fill me in for a layman's description of this metric.",
-            data: modify_time_period(mrta, 2),
+            data: modify_time_period(mrta, 1),
             linked: true,
             width: torso.width*2,
             height: trunk.height,
@@ -98,7 +144,9 @@ $(document).ready(function() {
             xax_count: 4,
             target: '#metric2',
             x_accessor: 'date',
-            y_accessor: 'value'
+            xax_format: xax_format(1),
+            y_accessor: 'value',
+            y_label: 'ms'
         });
 
         mrtw = moz_chart({
@@ -114,12 +162,13 @@ $(document).ready(function() {
             xax_count: 4,
             target: '#metric3',
             x_accessor: 'date',
+            xax_format: xax_format(1),
             y_accessor: 'value'
         });
         moz_chart({
             title: "Mean Request Time (Web Page)",
             description: "The chart is gracefully updated depending on the chosen time period.",
-            data: modify_time_period(mrtw, 2),
+            data: modify_time_period(mrtw, 1),
             linked: true,
             width: torso.width*2,
             height: trunk.height,
@@ -129,6 +178,7 @@ $(document).ready(function() {
             xax_count: 4,
             target: '#metric3',
             x_accessor: 'date',
+            xax_format: xax_format(1),
             y_accessor: 'value'
         });
 
@@ -155,6 +205,7 @@ $(document).ready(function() {
                 title: "Website Availability",
                 description: "Here is an example that shows percentages.",
                 data: u1,
+                linked: true,
                 width: torso.width * 2,
                 height: torso.height,
                 right: torso.right,
@@ -163,12 +214,14 @@ $(document).ready(function() {
                 format: 'percentage',
                 target: '#metric1',
                 x_accessor: 'date',
+                xax_format: xax_format(past_n_days),
                 y_accessor: 'value'
             });
 
             //update data
             moz_chart({
                 data: u2,
+                linked: true,
                 width: torso.width*2,
                 height: trunk.height,
                 right: trunk.right,
@@ -177,11 +230,13 @@ $(document).ready(function() {
                 xax_count: 4,
                 target: '#metric2',
                 x_accessor: 'date',
+                xax_format: xax_format(past_n_days),
                 y_accessor: 'value'
             });
 
             moz_chart({
                 data: u3,
+                linked: true,
                 width: torso.width*2,
                 height: trunk.height,
                 right: trunk.right,
@@ -190,6 +245,7 @@ $(document).ready(function() {
                 xax_count: 4,
                 target: '#metric3',
                 x_accessor: 'date',
+                xax_format: xax_format(past_n_days),
                 y_accessor: 'value'
             });
 
