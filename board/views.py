@@ -1,4 +1,4 @@
-from board.models import Service, Status
+from board.models import Service, Status, Event
 import datetime
 from django.views.generic import ListView, DetailView
 from django.template import RequestContext
@@ -13,14 +13,8 @@ class BoardMixin(object):
         return context
 
 
-def get_past_days(num):
-    date = datetime.date.today()
-    dates = []
-
-    for i in range(1, num + 1):
-        dates.append(date - datetime.timedelta(days=i))
-
-    return dates
+def get_start_date(days=7):
+    return datetime.date.today() - datetime.timedelta(days=days)
 
 
 class IndexView(BoardMixin, ListView):
@@ -29,8 +23,12 @@ class IndexView(BoardMixin, ListView):
     template_name = 'board/index.html'
 
     def get_context_data(self, **kwargs):
+        start_date = get_start_date()
+
         context = super(IndexView, self).get_context_data(**kwargs)
         context['default'] = Status.objects.default()
+        context['events'] = Event.objects.filter(start__gte=start_date).order_by('service', '-start')
+
         return context
 
 
@@ -41,9 +39,7 @@ class ServiceView(BoardMixin, DetailView):
     def get(self, request, slug=None, days=30):
 
         data = get_object_or_404(self.model, slug=slug)
-
-        start_date = datetime.date.today() - datetime.timedelta(days=days)
-
+        start_date = get_start_date(days)
         events = data.events.filter(start__gte=start_date)
 
         no_events = None

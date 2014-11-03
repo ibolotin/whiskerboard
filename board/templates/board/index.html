@@ -6,7 +6,7 @@
   {% for category in category_list %}
   <h2 class="category"><!-- {{ category.grouper.name }}--></h2>
   <div class="category-desc">
-      <!--{{ category.grouper.description|safe }} -->
+    <!--{{ category.grouper.description|safe }} -->
   </div>
   <table style="font-size: 30px; width:100%; margin-left:auto; margin-right:auto;" id="service-list" class="table">
     <thead>
@@ -17,8 +17,8 @@
     </thead>
     <tbody id="services-body">
     {% for service in category.list %}
-      <tr>
-          <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a>&nbsp;<span class='circlequestion' title='{{ service.description }}'></td>
+    <tr>
+      <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a>&nbsp;<span class='circlequestion' title='{{ service.description }}'></td>
         <td class="status highlight">
           {% with service.events.latest.status as latest_status %}
           {% if latest_status %}
@@ -31,10 +31,21 @@
           {% endwith %}
         </td>
       </tr>
+      {% endfor %}
+      </tbody>
+    </table>
     {% endfor %}
-    </tbody>
-  </table>
-{% endfor %}
 
-</div>
-{% endblock %}
+    <h2><strong>Recent Events</h2></strong>
+    {% regroup events by service as events_list %}
+    {% for service in events_list %}
+    <h4>{{ service.grouper }}</h4>
+    {% for item in service.list %}
+    <p>{{ item.start|date:"N j, fA T" }}: {{ item.message|safe }}</p>
+    {% endfor %}
+    {% empty %}
+    <p>No events found </p>
+    {% endfor %}
+
+  </div>
+  {% endblock %}
