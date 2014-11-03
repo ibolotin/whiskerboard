@@ -21,17 +21,52 @@
     <script src="{% static 'js/metrics-graphics/main.js' %}"></script>
 {% endblock %}
 
+{% block breadcrumbs %}
+    <hgroup id="main-feature">
+        <h1><a href="/" style="text-decoration: none;">{{ current_site.name }}</a></h1>
+    </hgroup>
+{% endblock %}
+
 {% block content %}
 <div id="webservices" class="center frame">
     <h1 class="large">{{ service.name }}</h1>
     <p id="service-desc">{{ service.description|safe }}</p>
-
+    <div class="billboard">
+        {% if no_events %}
+        <!-- FIXME -->
+        <h3><font color="green">The service is up</font></h3>
+        {% else %}
+        <h3><font color="{{ events.0.status.color }}">{{ events.0.status.description }}</font></h3>
+        {% endif %}
+    </div>
     <h3 class="date-range">
         {% if start_date %}
             {{ start_date|date:"n/j/Y"  }}
         {% endif %}
     </h3>
 
+    <h1 style="margin-top: 50px;"><span style="float: left">System Metrics</span>
+        <div style="float: right" class="button-list small text-center modify-time-period-controls">
+            <button type="button" class="button active"
+                        data-time_period="1">Day</button>
+            <button type="button" class="button"
+                        data-time_period="7">Week</button>
+            <button type="button" class="button"
+                    data-time_period="30">Month</button>
+        </div>
+    </h1>
+    <div style="margin-top: 100px;" id="container">
+    <div>
+        <div id="metric1"></div>
+    </div>
+    <div>
+        <div id="metric2"></div>
+    </div>
+    <div>
+        <div id="metric3"></div>
+    </div>
+
+    <h1 style="float: left">Past Incidents</h1>
     <table style="font-size: 24px; width:100%;" class="table event-log" cellpadding="10">
         <thead>
             <tr>
@@ -56,33 +91,11 @@
             {% endfor %}
             {% if no_events %}
             <tr>
-                <td colspan="3"><h1>{{ no_events }}</h1></td>
+                <td colspan="3"><h2>{{ no_events }}</h2></td>
             </tr>
             {% endif %}
         </tbody>
     </table>
-
-    <h1 style="margin-top: 50px;"><span style="float: left">System Metrics</span>
-        <div style="float: right" class="button-list small text-center modify-time-period-controls">
-            <button type="button" class="button active"
-                        data-time_period="1">Day</button>
-            <button type="button" class="button"
-                        data-time_period="7">Week</button>
-            <button type="button" class="button"
-                    data-time_period="30">Month</button>
-        </div>
-    </h1>
-
-    <div style="margin-top: 100px;" id="container">
-    <div>
-        <div id="metric1"></div>
-    </div>
-    <div>
-        <div id="metric2"></div>
-    </div>
-    <div>
-        <div id="metric3"></div>
-    </div>
 </div>
 </html>
 

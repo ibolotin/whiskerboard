@@ -51,12 +51,14 @@ mz_services = [
         "name": "Firefox Accounts",
         "slug": "fxa",
         "description": "The Firefox Accounts Service",
+        "url": "https://accounts.firefox.com",
         "category": "/api/v1/categories/1/",
     },
     {
         "name": "Firefox Hello",
         "slug": "fx-hello",
         "description": "The Firefox Hello Service",
+        "url": "https://hello.firefox.com",
         "category": "/api/v1/categories/1/",
     },
     {
@@ -69,6 +71,7 @@ mz_services = [
         "name": "Mozilla Location Service",
         "slug": "location",
         "description": "The Mozilla Location Service",
+        "url": "https://location.services.mozilla.com",
         "category": "/api/v1/categories/1/",
     }
 ]

@@ -49,20 +49,21 @@
 
                     {% block alt_header %}{% endblock %}
 
-                    {% block breadcrumbs %}{% endblock %}
+                    {% block breadcrumbs %}
+                    <!-- this will sadly need to be replaced -->
+                    <style type="text/css">
+                     #main-feature { background-position: 90% 20%; background-repeat: no-repeat; background-image: url({% static 'images/logo.png' %}); }
+                    </style>
+
+                    <hgroup id="main-feature" class="large">
+                        <h1><a href="/" style="text-decoration: none;">{{ current_site.name }}</a></h1>
+                        <h2>DEATH FROM ABOVE</h2>
+                    </hgroup>
+                    {% endblock %}
+
 
                 </header>
                 {% endblock %}
-
-                <!-- this will sadly need to be replaced -->
-                <style type="text/css">
-                 #main-feature { background-position: 95% 60%; background-repeat: no-repeat; background-image: url({% static 'images/logo.png' %}); }
-                </style>
-
-                <hgroup id="main-feature" class="large">
-                    <h1><a href="/" style="text-decoration: none;">{{ current_site.name }}</a></h1>
-                    <h2>DEATH FROM ABOVE</h2>
-                </hgroup>
 
                 <div id="content">
                     {% block content %}
@@ -70,9 +71,11 @@
                 </div>
                 <!-- FIXME -->
                 <br>
+                {% block bugzilla %}
                 <nav class="menu-bar billboard">
                     <a href="{{ bugzilla_url }}" target=_blank">Have a problem? Report it</a>
                 </nav>
+                {% endblock %}
             </div>
 
             {% block site_footer %}
