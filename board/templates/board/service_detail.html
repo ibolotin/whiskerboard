@@ -71,44 +71,39 @@
             <div id="metric3"></div>
         </div>
     </div>
-
-    <div id='incidents'>
-    <h1 align="left">Past Incidents</h1>
-   {% regroup events by start|date:"N j" as events_list %}
-   {% for event in events_list %}
-    <table style="font-size: 24px; width:100%;" class="table event-log" cellpadding="10">
-    <caption>{{ event.grouper }}</caption>
-        <thead>
-            <tr>
-                <tr>
-                <th class="time-header">Time</th>
-                <th class="status-header">Status</th>
-                <th>Message</th>
-            </tr>
-        </thead>
-        {% for item in event.list %}
-        <tbody id="events-tbody">
-            <tr>
-                <td>{{ item.start|date:"fA T" }}</td>
-                <td class="status highlight">
-                    {% if event.informational %}
-                    <img src="{% static 'images/status/information.png' %}" alt="Information">
-                    {% else %}
-                    <img src="{% static 'images/status/' %}{{ item.status.image }}.png" alt="{{ item.status.name }}">
-                    {% endif %}
-                </td>
-                <td>{{ item.message|safe }}</td>
-            </tr>
-            {% endfor %}
-            {% endfor %}
-            {% if no_events %}
-            <tr>
-                <td colspan="3"><h2>{{ no_events }}</h2></td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
-  </div>
+    <div id='recent-events' align="left">
+    <h2>Recent Events</h2>
+    {% regroup events by start|date:"M j, Y" as events_list %}
+    {% for service in events_list %}
+    <div class="status-day font-regular">
+      <div class="date">{{ service.grouper }}</div>
+    </div>
+    {% regroup service.list by service as service_events_list %}
+    {% for service_event in service_events_list %}
+    <div class="incident-container">
+      <div class="incident-title">
+        <a href="/incidents/FIXME">{{service_event.grouper}} Incident</a>
+      </div>
+      <small>Services: {{ service_event.grouper }}</small>
+      {% for item_event in service_event.list %}
+      <div class="updates-container">
+        <div class="update font-regular completed">
+          <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
+          </br>
+          <small>
+            {{ item_event.start|date:"M j, H:i T" }}
+          </small>
+        </div>
+      </div>
+      {% endfor %}
+      {% endfor %}
+      {% empty %}
+      <div class="status-day font-regular">
+        <div class="date">{% now "M j, Y"%}</div>
+        <p class="color-no-incidents">No events.</p>
+      </div>
+      {% endfor %}
+    </div>
 </div>
 
 {% endblock %}
