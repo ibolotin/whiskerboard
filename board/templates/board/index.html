@@ -36,15 +36,23 @@
   </table>
   {% endfor %}
   <br>
-  <h2>Recent Events</h2>
-  {% regroup events by service as events_list %}
-  {% for service in events_list %}
-  <h4>{{ service.grouper }}</h4>
-  {% for item in service.list %}
-  <p>{{ item.start|date:"N j, fA T" }}: {{ item.message|safe }}</p>
-  {% endfor %}
-  {% empty %}
-  <p>No events found</p>
-  {% endfor %}
+  <div id='past-events'>
+    <h2>Past Events</h2>
+    {% regroup events by service as events_list %}
+    {% for service in events_list %}
+    <h4>{{ service.grouper }}</h4>
+    {% regroup service.list by start|date:"N j" as service_events_list %}
+    {% for service_event in service_events_list %}
+    <h5>{{ service_event.grouper }}</h5>
+    <ul style="list-style: none">
+      {% for item_event in service_event.list %}
+      <li>{{ item_event.start|date:"fA" }} {{ item_event.message|safe }}</li>
+      {% endfor %}
+    </ul>
+    {% endfor %}
+    {% empty %}
+    <p>No events found</p>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}
