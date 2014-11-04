@@ -51,6 +51,9 @@ mz_services = [
         "name": "Firefox Accounts",
         "slug": "fxa",
         "description": "The Firefox Accounts Service",
+        "long_description": "Firefox Accounts is a consumer account system " +
+        "which provides access to services run by Mozilla, such as Firefox " +
+        "Marketplace and Firefox Sync.",
         "url": "https://accounts.firefox.com",
         "category": "/api/v1/categories/1/",
     },
@@ -58,6 +61,8 @@ mz_services = [
         "name": "Firefox Hello",
         "slug": "fx-hello",
         "description": "The Firefox Hello Service",
+        "long_description": "Firefox Hello is a user-visible real-time " +
+        "communications service for existing Mozilla products.",
         "url": "https://hello.firefox.com",
         "category": "/api/v1/categories/1/",
     },
@@ -65,12 +70,18 @@ mz_services = [
         "name": "Firefox Sync",
         "slug": "fx-sync",
         "description": "The Firefox Sync Service",
+        "long_description": "Firefox Sync is a set of software components " +
+        "and specifications that synchronize data between multiple Mozilla " +
+        "product instances.",
         "category": "/api/v1/categories/1/",
     },
     {
         "name": "Mozilla Location Service",
         "slug": "location",
         "description": "The Mozilla Location Service",
+        "long_description": "The Mozilla Location Service (MLS) is an open" +
+        "service which lets devices determine their location based on" +
+        "network infrastructure like WiFi access points and cell towers.",
         "url": "https://location.services.mozilla.com",
         "category": "/api/v1/categories/1/",
     }
