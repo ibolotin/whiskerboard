@@ -47,16 +47,16 @@
     {% for service_event in service_events_list %}
     <div class="incident-container">
       <div class="incident-title">
-        <a href="/incidents/FIXME">Example Incident</a>
+        <a href="/incidents/FIXME">{{service_event.grouper}} Incident</a>
       </div>
       <small>Services: {{ service_event.grouper }}</small>
       {% for item_event in service_event.list %}
       <div class="updates-container">
         <div class="update font-regular completed">
-          <strong>{{ item_event.status.name }}</strong> -  {{ item_event.message|safe }}
+          <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
           </br>
           <small>
-            {{ item_event.start|date:"N j, Y" }}
+            {{ item_event.start|date:"M j, H:i T" }}
           </small>
         </div>
       </div>
@@ -64,7 +64,7 @@
       {% endfor %}
       {% empty %}
       <div class="status-day font-regular">
-        <div class="date"></div>
+        <div class="date">{% now "M j, Y"%}</div>
         <p class="color-no-incidents">No events.</p>
       </div>
       {% endfor %}
