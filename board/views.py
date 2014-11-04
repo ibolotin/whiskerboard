@@ -27,7 +27,7 @@ class IndexView(BoardMixin, ListView):
 
         context = super(IndexView, self).get_context_data(**kwargs)
         context['default'] = Status.objects.default()
-        context['events'] = Event.objects.filter(start__gte=start_date).order_by('service', '-start')
+        context['events'] = Event.objects.filter(start__gte=start_date).order_by('-start')
 
         return context
 

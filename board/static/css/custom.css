@@ -1,3 +1,35 @@
+.large,
+.large h1 {
+  font-size: 56px;
+  letter-spacing: -3px;
+  line-height: 100%;
+}
+
+
+.date {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 10px 20px 1px 0;
+  font-size: 18px;
+  text-align: left;
+}
+
+small {
+    /* FIXME */
+    padding: 8px 0px 0px 0;
+    color: #888888;
+}
+
+.color-no-incidents {
+    /* FIXME */
+    padding: 8px 0px 0px 0;
+    color: #888888;
+}
+.incident-title {
+    /* FIXME */
+    padding: 8px 0px 0px 0;
+    font-size: 18px;
+}
+
 .circlequestion:before
 {
     content: '?';
@@ -24,3 +56,4 @@
     border-color: white;
     text-decoration: none;
 }
+
