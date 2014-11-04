@@ -72,28 +72,34 @@
         </div>
     </div>
 
-    <h1 style="float: left">Past Incidents</h1>
+    <div id='incidents'>
+    <h1 align="left">Past Incidents</h1>
+   {% regroup events by start|date:"N j" as events_list %}
+   {% for event in events_list %}
     <table style="font-size: 24px; width:100%;" class="table event-log" cellpadding="10">
+    <caption>{{ event.grouper }}</caption>
         <thead>
             <tr>
+                <tr>
                 <th class="time-header">Time</th>
                 <th class="status-header">Status</th>
                 <th>Message</th>
             </tr>
         </thead>
+        {% for item in event.list %}
         <tbody id="events-tbody">
-            {% for e in events %}
             <tr>
-                <td>{{ e.start|date:"N j, fA T" }}</td>
+                <td>{{ item.start|date:"fA T" }}</td>
                 <td class="status highlight">
-                    {% if e.informational %}
+                    {% if event.informational %}
                     <img src="{% static 'images/status/information.png' %}" alt="Information">
                     {% else %}
-                    <img src="{% static 'images/status/' %}{{ e.status.image }}.png" alt="{{ e.status.name }}">
+                    <img src="{% static 'images/status/' %}{{ item.status.image }}.png" alt="{{ item.status.name }}">
                     {% endif %}
                 </td>
-                <td>{{ e.message|safe }}</td>
+                <td>{{ item.message|safe }}</td>
             </tr>
+            {% endfor %}
             {% endfor %}
             {% if no_events %}
             <tr>
@@ -102,6 +108,7 @@
             {% endif %}
         </tbody>
     </table>
+  </div>
 </div>
 
 {% endblock %}
