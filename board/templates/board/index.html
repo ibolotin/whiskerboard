@@ -3,71 +3,72 @@
 {% block content %}
 {% regroup services|dictsort:"category.name" by category as category_list %}
 <div id="webservices" class="">
-  {% for category in category_list %}
-  <h2 class="category"><!-- {{ category.grouper.name }}--></h2>
-  <div class="category-desc">
-    <!--{{ category.grouper.description|safe }} -->
-  </div>
-  <table style="font-size: 22px; width:100%; margin-left:auto; margin-right:auto;" id="service-list" class="table">
-    <thead>
-      <tr>
-        <th>Service</th>
-        <th>State</th>
-      </tr>
-    </thead>
-    <tbody id="services-body">
-    {% for service in category.list %}
-    <tr>
-      <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a>&nbsp;<span class='circlequestion' title='{{ service.long_description }}'></span></td>
-      <td class="status highlight">
-        {% with service.events.latest.status as latest_status %}
-        {% if latest_status %}
-        <font color="{{ latest_status.color }}">{{ latest_status.description }}</font>
-        <!-- <img src="{% static 'images/status/' %}{{ latest_status.image }}.png" alt="{{ latest_status }} "/> -->
-        {% else %}
-        <font color="{{ default.color }}">{{ default.description }}</font>
-        <!-- <img src="{% static 'images/status/' %}{{ default.image }}.png" alt="{{ default.name }} "/> -->
-        {% endif %}
-        {% endwith %}
-      </td>
-    </tr>
+    {% for category in category_list %}
+    <h2 class="category"><!-- {{ category.grouper.name }}--></h2>
+    <div class="category-desc">
+        <!--{{ category.grouper.description|safe }} -->
+    </div>
+    <table style="font-size: 22px; width:100%; margin-left:auto; margin-right:auto;" id="service-list" class="table">
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody id="services-body">
+        {% for service in category.list %}
+        <tr>
+            <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a>&nbsp;<span class='circlequestion' title='{{ service.long_description }}'></span></td>
+            <td class="status highlight">
+                {% with service.events.latest.status as latest_status %}
+                {% if latest_status %}
+                <font color="{{ latest_status.color }}">{{ latest_status.description }}</font>
+                <!-- <img src="{% static 'images/status/' %}{{ latest_status.image }}.png" alt="{{ latest_status }} "/> -->
+                {% else %}
+                <font color="{{ default.color }}">{{ default.description }}</font>
+                <!-- <img src="{% static 'images/status/' %}{{ default.image }}.png" alt="{{ default.name }} "/> -->
+                {% endif %}
+                {% endwith %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
     {% endfor %}
-    </tbody>
-  </table>
-  {% endfor %}
-  <br>
-  <div id='recent-events'>
+</div>
+<br>
+<div id='recent-events'>
     <h2>Recent Events</h2>
     {% regroup events by start|date:"M j, Y" as events_list %}
     {% for service in events_list %}
     <div class="status-day font-regular">
-      <div class="date">{{ service.grouper }}</div>
+        <div class="date">{{ service.grouper }}</div>
     </div>
     {% regroup service.list by service as service_events_list %}
     {% for service_event in service_events_list %}
     <div class="incident-container">
-      <div class="incident-title">
-        <a href="/incidents/FIXME">{{service_event.grouper}} Incident</a>
-      </div>
-      <small>Services: {{ service_event.grouper }}</small>
-      {% for item_event in service_event.list %}
-      <div class="updates-container">
-        <div class="update font-regular completed">
-          <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
-          </br>
-          <small>
-            {{ item_event.start|date:"M j, H:i T" }}
-          </small>
+        <div class="incident-title">
+            <a href="/incidents/FIXME">{{service_event.grouper}} Incident</a>
         </div>
-      </div>
-      {% endfor %}
-      {% endfor %}
-      {% empty %}
-      <div class="status-day font-regular">
-        <div class="date">{% now "M j, Y"%}</div>
-        <p class="color-no-incidents">No events.</p>
-      </div>
-      {% endfor %}
+        <small>Services: {{ service_event.grouper }}</small>
+        {% for item_event in service_event.list %}
+        <div class="updates-container">
+            <div class="update font-regular completed">
+                <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
+                </br>
+                <small>
+                    {{ item_event.start|date:"M j, H:i T" }}
+                </small>
+            </div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% empty %}
+        <div class="status-day font-regular">
+            <div class="date">{% now "M j, Y"%}</div>
+            <p class="color-no-incidents">No events.</p>
+        </div>
+        {% endfor %}
     </div>
-  </div>
-  {% endblock %}
+</div>
+{% endblock %}
