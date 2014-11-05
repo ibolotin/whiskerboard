@@ -18,7 +18,7 @@
         <tbody id="services-body">
         {% for service in category.list %}
         <tr>
-            <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a>&nbsp;<span class='circlequestion' title='{{ service.long_description }}'></span></td>
+            <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a>&nbsp;<a href="{{ service.url }}" data-tooltip='{{ service.long_description }}' target='_blank'><span class='circlequestion'></span></a></td>
             <td class="status highlight">
                 {% with service.events.latest.status as latest_status %}
                 {% if latest_status %}
