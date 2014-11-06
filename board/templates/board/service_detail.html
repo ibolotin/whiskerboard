@@ -23,7 +23,7 @@
 
 {% block breadcrumbs %}
 <hgroup id="main-feature">
-<h1><a href="/" style="text-decoration: none;">{{ current_site.name }}</a></h1>
+    <h1><a href="/" style="text-decoration: none;">{{ current_site.name }}</a></h1>
 </hgroup>
 {% endblock %}
 
@@ -49,7 +49,6 @@
             {{ start_date|date:"n/j/Y"  }}
             {% endif %}
         </h3>
-
         <h1 style="margin-top: 50px;"><span style="float: left">System Metrics</span>
             <div style="float: right" class="button-list small text-center modify-time-period-controls">
                 <button type="button" class="button active"
@@ -71,39 +70,39 @@
                 <div id="metric3"></div>
             </div>
         </div>
-        <div id='recent-events' align="left">
-            <h2>Recent Events</h2>
-            {% regroup events by start|date:"M j, Y" as events_list %}
-            {% for service in events_list %}
+    </div>
+    <div id='recent-events' align="left">
+        <h2>Recent Events</h2>
+        {% regroup events by start|date:"M j, Y" as events_list %}
+        {% for service in events_list %}
+        <div class="status-day font-regular">
+            <div class="date">{{ service.grouper }}</div>
+        </div>
+        {% regroup service.list by service as service_events_list %}
+        {% for service_event in service_events_list %}
+        <div class="incident-container">
+            <div class="incident-title">
+                <a href="/incidents/FIXME">{{service_event.grouper}} Incident</a>
+            </div>
+            <small>Services: {{ service_event.grouper }}</small>
+            {% for item_event in service_event.list %}
+            <div class="updates-container">
+                <div class="update font-regular completed">
+                    <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
+                    <br>
+                    <small>
+                        {{ item_event.start|date:"M j, H:i T" }}
+                    </small>
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+            {% empty %}
             <div class="status-day font-regular">
-                <div class="date">{{ service.grouper }}</div>
+                <div class="date">{% now "M j, Y"%}</div>
+                <p class="color-no-incidents">No events.</p>
             </div>
-            {% regroup service.list by service as service_events_list %}
-            {% for service_event in service_events_list %}
-            <div class="incident-container">
-                <div class="incident-title">
-                    <a href="/incidents/FIXME">{{service_event.grouper}} Incident</a>
-                </div>
-                <small>Services: {{ service_event.grouper }}</small>
-                {% for item_event in service_event.list %}
-                <div class="updates-container">
-                    <div class="update font-regular completed">
-                        <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
-                        <br>
-                        <small>
-                            {{ item_event.start|date:"M j, H:i T" }}
-                        </small>
-                    </div>
-                </div>
-                {% endfor %}
-                {% endfor %}
-                {% empty %}
-                <div class="status-day font-regular">
-                    <div class="date">{% now "M j, Y"%}</div>
-                    <p class="color-no-incidents">No events.</p>
-                </div>
-                {% endfor %}
-            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
