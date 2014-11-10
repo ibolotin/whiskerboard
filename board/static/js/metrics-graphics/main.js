@@ -81,7 +81,7 @@ $(document).ready(function() {
         //     'label': '2nd Milestone'
         // }]
 
-        wa = moz_chart({
+        wa = data_graphic({
             title: "Website Availability",
             description: "Here is an example that shows percentages.",
             data: uptime,
@@ -97,7 +97,7 @@ $(document).ready(function() {
             xax_format: xax_format(1),
             y_accessor: 'value'
         });
-        moz_chart({
+        data_graphic({
             title: "Website Availability",
             description: "Here is an example that shows percentages.",
             data: modify_time_period(wa, 1),
@@ -114,7 +114,7 @@ $(document).ready(function() {
             y_accessor: 'value'
         });
 
-        mrta = moz_chart({
+        mrta = data_graphic({
             title: "Mean Request Time (API)",
             description: "Fill me in for a layman's description of this metric.",
             data: response_time_api,
@@ -131,7 +131,7 @@ $(document).ready(function() {
             y_accessor: 'value',
             y_label: 'ms'
         });
-        moz_chart({
+        data_graphic({
             title: "Mean Request Time (API)",
             description: "Fill me in for a layman's description of this metric.",
             data: modify_time_period(mrta, 1),
@@ -149,7 +149,7 @@ $(document).ready(function() {
             y_label: 'ms'
         });
 
-        mrtw = moz_chart({
+        mrtw = data_graphic({
             title: "Mean Request Time (Web Page)",
             description: "The chart is gracefully updated depending on the chosen time period.",
             data: response_time_web,
@@ -165,7 +165,7 @@ $(document).ready(function() {
             xax_format: xax_format(1),
             y_accessor: 'value'
         });
-        moz_chart({
+        data_graphic({
             title: "Mean Request Time (Web Page)",
             description: "The chart is gracefully updated depending on the chosen time period.",
             data: modify_time_period(mrtw, 1),
@@ -201,7 +201,7 @@ $(document).ready(function() {
                 .siblings()
                 .removeClass('active');
 
-            moz_chart({
+            data_graphic({
                 title: "Website Availability",
                 description: "Here is an example that shows percentages.",
                 data: u1,
@@ -219,7 +219,7 @@ $(document).ready(function() {
             });
 
             //update data
-            moz_chart({
+            data_graphic({
                 data: u2,
                 linked: true,
                 width: torso.width*2,
@@ -234,7 +234,7 @@ $(document).ready(function() {
                 y_accessor: 'value'
             });
 
-            moz_chart({
+            data_graphic({
                 data: u3,
                 linked: true,
                 width: torso.width*2,
