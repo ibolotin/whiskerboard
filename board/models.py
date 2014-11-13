@@ -1,6 +1,7 @@
 from datetime import datetime, date, timedelta
 from django.db import models
 from colorfield.fields import ColorField
+from randomslugfield import RandomSlugField
 
 
 class Category(models.Model):
@@ -146,8 +147,20 @@ class Status(models.Model):
         return self.name
 
 
+class Incident(models.Model):
+    """
+    A grouping of Events.
+    """
+    name = models.CharField(max_length=100)
+    slug = RandomSlugField(length=7)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Event(models.Model):
     service = models.ForeignKey(Service, related_name='events')
+    incident = models.ForeignKey(Incident, related_name='events')
     status = models.ForeignKey(Status, related_name='events')
     message = models.TextField()
     start = models.DateTimeField(default=datetime.now)
@@ -156,6 +169,9 @@ class Event(models.Model):
     class Meta:
         ordering = ('-start',)
         get_latest_by = 'start'
+
+    def __unicode__(self):
+        return "{} {} at {}".format(self.service, self.status, self.start)
 
 
 def signals_import():

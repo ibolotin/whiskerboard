@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="center">{{ incident.name }}</h2>
+    <div class="incident-container">
+        <div class="center service-list">
+            Services affected:
+            {% for service in services %}
+            <a style="text-decoration: none;" href="/services/{{ service.slug }}">{{ service.name }}</a>
+            {% endfor %}
+        </div>
+        <div id='recent-events' align="left">
+            <h3>Events</h3>
+
+        {% for item_event in incident.events.all %}
+        <div class="updates-container">
+            <div class="update">
+                <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
+                <br>
+                <small>
+                    {{ item_event.start|date:"M j, H:i T" }}
+                </small>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}

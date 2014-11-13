@@ -31,79 +31,76 @@
 <div id="webservices" class="center frame">
     <h1 class="large">{{ service.name }}</h1>
     <p id="service-desc">{{ service.description|safe }}</p>
-    {% if no_events %}
-    <div style="background: green; box-shadow: 0 0 0 1px black inset; padding: 6px; border-radius: 10px; cursor: pointer;" class="billboard">
-        {% else %}
-        <div style="background: {{ events.0.status.color }}; box-shadow: 0 0 0 1px black inset; padding: 10px; border-radius: 10px; cursor: pointer;" class="billboard">
-            {% endif %}
-
-            {% if no_events %}
-            <!-- FIXME -->
-            <h2><font color="white">The service is up</font></h2><font class="small" style="float: right" color="white">refreshed X minutes ago</font>
-            {% else %}
-            <h2><font color="white">{{ events.0.status.description }}</font></h2><font class="small" style="float: right" color="white">updated X minutes ago</font>
-            {% endif %}
-        </div>
-        <h3 class="date-range">
-            {% if start_date %}
-            {{ start_date|date:"n/j/Y"  }}
-            {% endif %}
-        </h3>
-        <h1 style="margin-top: 50px;"><span style="float: left">System Metrics</span>
-            <div style="float: right" class="button-list small text-center modify-time-period-controls">
-                <button type="button" class="button active"
+    {% if no_incidents %}
+    <div style="background: {{ default.color }}; box-shadow: 0 0 0 1px black inset; padding: 6px; border-radius: 10px; cursor: pointer;" class="billboard">
+    {% else %}
+    <div style="background: {{ service.events.latest.status.color }}; box-shadow: 0 0 0 1px black inset; padding: 10px; border-radius: 10px; cursor: pointer;" class="billboard">
+    {% endif %}
+    {% if no_incidents %}
+        <!-- FIXME -->
+        <h2><font color="white">The service is up</font></h2><font class="small" style="float: right" color="white">refreshed X minutes ago</font>
+    {% else %}
+        <h2><font color="white">{{ service.events.latest.status.description }}</font></h2><font class="small" style="float: right" color="white">updated X minutes ago</font>
+    {% endif %}
+    </div>
+    <h3 class="date-range">
+    {% if start_date %}
+        {{ start_date|date:"n/j/Y"  }}
+    {% endif %}
+    </h3>
+    <h1 style="margin-top: 50px;"><span style="float: left">System Metrics</span>
+        <div style="float: right" class="button-list small text-center modify-time-period-controls">
+            <button type="button" class="button active"
                     data-time_period="1">Day</button>
-                <button type="button" class="button"
+            <button type="button" class="button"
                     data-time_period="7">Week</button>
-                <button type="button" class="button"
+            <button type="button" class="button"
                     data-time_period="30">Month</button>
-            </div>
-        </h1>
-        <div style="margin-top: 100px;" id="container">
-            <div>
-                <div id="metric1"></div>
-            </div>
-            <div>
-                <div id="metric2"></div>
-            </div>
-            <div>
-                <div id="metric3"></div>
-            </div>
         </div>
+    </h1>
+    <div style="margin-top: 100px;" id="container">
+        <div>
+            <div id="metric1"></div>
+        </div>
+        <div>
+            <div id="metric2"></div>
+        </div>
+        <div>
+            <div id="metric3"></div>
+        </div>
+    </div>
     </div>
     <div id='recent-events' align="left">
         <h2>Recent Events</h2>
-        {% regroup events by start|date:"M j, Y" as events_list %}
-        {% for service in events_list %}
-        <div class="status-day font-regular">
-            <div class="date">{{ service.grouper }}</div>
-        </div>
-        {% regroup service.list by service as service_events_list %}
-        {% for service_event in service_events_list %}
-        <div class="incident-container">
-            <div class="incident-title">
-                <a href="/incidents/FIXME">{{service_event.grouper}} Incident</a>
-            </div>
-            <small>Services: {{ service_event.grouper }}</small>
-            {% for item_event in service_event.list %}
-            <div class="updates-container">
-                <div class="update font-regular completed">
-                    <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
-                    <br>
-                    <small>
-                        {{ item_event.start|date:"M j, H:i T" }}
-                    </small>
-                </div>
-            </div>
-            {% endfor %}
-            {% endfor %}
-            {% empty %}
-            <div class="status-day font-regular">
-                <div class="date">{% now "M j, Y"%}</div>
-                <p class="color-no-incidents">No events.</p>
-            </div>
-            {% endfor %}
-        </div>
+        {% if no_incidents %}
+        {{ no_incidents }}
+        {% endif %}
+    {% for day, incidents in dates.items %}
+    {% if incidents|length == 0 %}
+    {% else %}
+    <div class="status-day font-regular">
+        <div class="date">{{ day|date:"M j, Y" }}</div>
     </div>
+    {% for incident in incidents %}
+    <div class="incident-container">
+        <div class="incident-title">
+            <a href="/incidents/{{ incident.slug }}">{{ incident.name }}</a>
+        </div>
+        <small>Services: {{ incident.services }}</small>
+        {% for item_event in incident.events.all %}
+        <div class="updates-container">
+            <div class="update font-regular completed">
+                <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
+                <br>
+                <small>
+                    {{ item_event.start|date:"M j, H:i T" }}
+                </small>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
 </div>
 {% endblock %}

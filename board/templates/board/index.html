@@ -39,19 +39,20 @@
 <br>
 <div id='recent-events'>
     <h2>Recent Events</h2>
-    {% regroup events by start|date:"M j, Y" as events_list %}
-    {% for service in events_list %}
+    {% for day, incidents in dates.items %}
     <div class="status-day font-regular">
-        <div class="date">{{ service.grouper }}</div>
+        <div class="date">{{ day|date:"M j, Y" }}</div>
     </div>
-    {% regroup service.list by service as service_events_list %}
-    {% for service_event in service_events_list %}
+    {% if incidents|length == 0 %}
+    <small>No incidents reported.</small>
+    {% else %}
+    {% for incident in incidents %}
     <div class="incident-container">
         <div class="incident-title">
-            <a href="/incidents/FIXME">{{service_event.grouper}} Incident</a>
+            <a style="text-decoration: none;" href="/incidents/{{ incident.slug }}">{{ incident.name }}</a>
         </div>
-        <small>Services: {{ service_event.grouper }}</small>
-        {% for item_event in service_event.list %}
+        <small>Services: {{ incident.services }}</small>
+        {% for item_event in incident.events.all %}
         <div class="updates-container">
             <div class="update font-regular completed">
                 <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
@@ -62,13 +63,9 @@
             </div>
         </div>
         {% endfor %}
-        {% endfor %}
-        {% empty %}
-        <div class="status-day font-regular">
-            <div class="date">{% now "M j, Y"%}</div>
-            <p class="color-no-incidents">No events.</p>
-        </div>
-        {% endfor %}
     </div>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
 </div>
 {% endblock %}

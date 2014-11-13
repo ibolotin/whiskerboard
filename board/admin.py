@@ -1,5 +1,5 @@
 from django.contrib import admin
-from board.models import Category, Service, Status, Event
+from board.models import Category, Service, Status, Incident, Event
 from tastypie.admin import ApiKeyInline
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
@@ -33,8 +33,14 @@ class StatusAdmin(admin.ModelAdmin):
 admin.site.register(Status, StatusAdmin)
 
 
+class IncidentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
+
+admin.site.register(Incident, IncidentAdmin)
+
+
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('start', 'service', 'status', 'message')
-    list_filter = ('service', 'status')
+    list_display = ('start', 'service', 'incident', 'status', 'message')
+    list_filter = ('service', 'incident', 'status')
 
 admin.site.register(Event, EventAdmin)

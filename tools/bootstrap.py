@@ -2,6 +2,7 @@
 import httplib
 import json
 import sys
+import datetime
 
 # basic bootstrap of our services via the API
 
@@ -79,7 +80,7 @@ mz_services = [
         "name": "Mozilla Location Service",
         "slug": "location",
         "description": "The Mozilla Location Service",
-        "long_description": "The Mozilla Location Service (MLS) is an open" +
+        "long_description": "The Mozilla Location Service (MLS) is an open " +
         "service which lets devices determine their location based on" +
         "network infrastructure like WiFi access points and cell towers.",
         "url": "https://location.services.mozilla.com",
@@ -97,3 +98,15 @@ if __name__ == "__main__":
     api.post('/api/v1/categories/', mz)
     for svc in mz_services:
         api.post('/api/v1/services/', svc)
+
+    api.post('/api/v1/incidents/',
+             {"name": "Test Incident"})
+
+    api.post('/api/v1/events/',
+             {"informational": False,
+              "message": "Test Message",
+              "service": "/api/v1/services/1/",
+              "start": '{0}'.format(datetime.datetime.now()),
+              "incident": "/api/v1/incidents/1/",
+              "status": "/api/v1/statuses/2/",
+              })

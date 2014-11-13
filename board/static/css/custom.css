@@ -267,3 +267,9 @@ small {
   margin-left: 0;
   margin-bottom: -16px;
 }
+
+/* FIXME needs to overwrite a */
+.service-list {
+  text-decoration: none;
+  font-size: 18px;
+}
