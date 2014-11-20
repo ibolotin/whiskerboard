@@ -55,8 +55,7 @@
         {% for item_event in incident.events.all %}
         <div class="updates-container">
             <div class="update font-regular completed">
-                <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
-                </br>
+                <strong><font color="{{ item_event.status.color }}">{{ item_event.message|safe }}</font></strong></br>
                 <small>
                     {{ item_event.start|date:"M j, H:i T" }}
                 </small>
