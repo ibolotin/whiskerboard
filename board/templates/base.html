@@ -2,132 +2,103 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html class="windows no-js" lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        {% block extra_meta %}{% endblock %}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block extra_meta %}{% endblock %}
 
-        <title>{% block page_title_prefix %}Mozilla — {% endblock %}{% block page_title %}{{ current_site.name }}{% endblock %}{% block page_title_suffix %}{% endblock %}</title>
+    <title>{% block page_title_prefix %}Mozilla — {% endblock %}{% block page_title %}{{ current_site.name }}{% endblock %}{% block page_title_suffix %}{% endblock %}</title>
 
-        {% block favicon %}<link rel="shortcut icon" href="{% static 'media/img/favicon.ico' %}" />{% endblock %}
-        <link rel="stylesheet" type="text/css" href="//www.mozilla.org/tabzilla/media/css/tabzilla.css" media="screen" />
-        <link rel="alternate" type="application/rss+xml" title="Latest status updates." href="{% url 'feed' %}">
+    {% block favicon %}<link rel="shortcut icon" href="{% static 'media/img/favicon.ico' %}" />{% endblock %}
+    <link rel="stylesheet" type="text/css" href="//www.mozilla.org/tabzilla/media/css/tabzilla.css" media="screen" />
+    <link rel="alternate" type="application/rss+xml" title="Latest status updates." href="{% url 'feed' %}">
 
         <!--[if lte IE 8]>
         <script src="{% static 'js/libs/html5shiv.js' %}"></script>
         <![endif]-->
 
         {% block css %}
-        <link rel="stylesheet" type="text/css" href="{% static 'css/sandstone/sandstone-resp.css' %}" media="screen" />
+        <link rel="stylesheet" href="//code.cdn.mozilla.net/fonts/fira.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/normalize.css' %}" media="screen" />
         <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}" media="screen" />
         {% endblock %}
         {% block site_css %}{% endblock %}
 
         {% block extrahead %}{% endblock %}
     </head>
-    <!-- The four different themes of sandstone are, stone, sand, sky, space. Replace the class on the
-         body tag below, with the theme you wish to use for your project -->
-    <body class="sky">
-        <div id="outer-wrapper">
-            <div id="wrapper">
+    <body>
+        <nav id="main-nav"></nav>
+        <div id="wrapper">
+            {% block site_header %}
+            {% block breadcrumbs %}
+            <header id="main-header">
+                <h1><a href="/">{{ current_site.name }}</a></h1>
+            </header>
+            {% endblock %}
+            {% endblock %}
 
-                {% block site_header %}
-                <header id="masthead">
-                    <a href="http://www.mozilla.org/" id="tabzilla">Mozilla</a>
-                    <nav id="nav-main" role="menubar">
-                        <span class="toggle" role="button" aria-controls="nav-main-menu" tabindex="0">Menu</span>
-                        <ul role="menu" id="nav-main-menu">
-                            <li role="menuitem" class="first"><a href="//www.mozilla.org/en-US/mission/">Mission</a></li>
-                            <li role="menuitem"><a href="//www.mozilla.org/en-US/about/">About</a></li>
-                            <li role="menuitem"><a href="//www.mozilla.org/en-US/products/">Products</a></li>
-                            <li role="menuitem" class="last"><a href="//www.mozilla.org/en-US/contribute/">Get Involved</a></li>
-                        </ul>
-                    </nav>
-
-                    {% block site_header_logo %}
-                    <h2><a href="//mozilla.org"><img src="{% static 'media/img/sandstone/header-mozilla-stone.png' %}" alt="mozilla"></a></h2>
-                    {% endblock %}
-
-                    {% block alt_header %}{% endblock %}
-
-                    {% block breadcrumbs %}
-                    <!-- this will sadly need to be replaced -->
-                    <style type="text/css">
-                     #main-feature { background-position: 90% 0%; background-repeat: no-repeat; background-image: url({% static 'images/logo.png' %}); }
-                    </style>
-
-                    <hgroup id="main-feature">
-                        <h1><a href="/" style="text-decoration: none;">{{ current_site.name }}</a></h1>
-                    </hgroup>
-                    {% endblock %}
-
-
-                </header>
-                {% endblock %}
-
-                <div id="content">
-                    {% block content %}
-                    {% endblock %}
-                </div>
-                <!-- FIXME -->
-                <br>
-                {% block bugzilla %}
-                <nav class="menu-bar billboard">
-                    <a href="{{ bugzilla_url }}" target="_blank">Have a problem? Report it</a>
-                </nav>
+            <div id="content">
+                {% block content %}
                 {% endblock %}
             </div>
-
-            {% block site_footer %}
-            <footer id="colophon" class="">
-                <nav class="row">
-                    <div class="col col-1">
-                        <h1 class="logo"><a href="/en-US/">Mozilla</a></h1>
-                        <p class="license">Portions of this content are &copy;1998–2014 by individual mozilla.org contributors. Content available under a <a href="/en-US/foundation/licensing/website-content/">Creative Commons license</a>.</p>
-                    </div>
-                    <div class="col col-2">
-                        <ul class="links-join">
-                            <li><a href="/en-US/contact/spaces/">Contact Us</a></li>
-                            <li class="wrap"><a href="/en-US/about/partnerships/">Partner with Us</a></li>
-                            <li class="clear"><a href="//sendto.mozilla.org/page/contribute/Give-Now" class="donate">Donate</a></li>
-                            <li class="wrap"><a href="//affiliates.mozilla.org/">Firefox Affiliates</a></li>
-                            <li class="clear"><a href="/en-US/contribute/page/">Contribute to this page</a></li>
-                        </ul>
-                        <ul class="links-legal">
-                            <li><a href="/en-US/privacy/">Privacy</a></li>
-                            <li class="wrap"><a href="/en-US/privacy/websites/#cookies">Cookies</a></li>
-                            <li class="wrap"><a href="/en-US/about/legal/">Legal</a></li>
-                            <li class="clear"><a href="/en-US/about/legal/fraud-report/">Report Trademark Abuse</a></li>
-                        </ul>
-                    </div>
-                    <div class="col col-3">
-                        <ul class="links-social">
-                            <li>
-                                Mozilla:
-                                <ul>
-                                    <li><a href="//twitter.com/mozilla">Twitter<span> (@mozilla)</span></a></li>
-                                    <li><a href="//www.facebook.com/mozilla">Facebook<span> (Mozilla)</span></a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                Firefox:
-                                <ul>
-                                    <li><a href="//twitter.com/firefox">Twitter<span> (@firefox)</span></a></li>
-                                    <li><a href="//www.facebook.com/Firefox">Facebook<span> (Firefox)</span></a></li>
-                                    <li><a href="//www.youtube.com/firefoxchannel">YouTube<span> (firefoxchannel)</span></a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <div class="lang-switcher">
-                        </div>
-                    </div>
-                </nav>
-            </footer>
+            <!-- FIXME -->
+            <br>
+            {% block bugzilla %}
+            <nav class="menu-bar billboard">
+                <a href="{{ bugzilla_url }}" target="_blank">Have a problem? Report it</a>
+            </nav>
             {% endblock %}
         </div>
-        {% block js %}
-        <script src="//www.mozilla.org/tabzilla/media/js/tabzilla.js"></script>
-        <script src="{% static 'js/site.js' %}"></script>
+
+        {% block site_footer %}
+        <footer id="colophon" class="">
+            <nav class="row">
+                <div class="col col-1">
+                    <h1 class="logo"><a href="/en-US/">Mozilla</a></h1>
+                    <p class="license">Portions of this content are &copy;1998–2014 by individual mozilla.org contributors. Content available under a <a href="/en-US/foundation/licensing/website-content/">Creative Commons license</a>.</p>
+                </div>
+                <div class="col col-2">
+                    <ul class="links-join">
+                        <li><a href="/en-US/contact/spaces/">Contact Us</a></li>
+                        <li class="wrap"><a href="/en-US/about/partnerships/">Partner with Us</a></li>
+                        <li class="clear"><a href="//sendto.mozilla.org/page/contribute/Give-Now" class="donate">Donate</a></li>
+                        <li class="wrap"><a href="//affiliates.mozilla.org/">Firefox Affiliates</a></li>
+                        <li class="clear"><a href="/en-US/contribute/page/">Contribute to this page</a></li>
+                    </ul>
+                    <ul class="links-legal">
+                        <li><a href="/en-US/privacy/">Privacy</a></li>
+                        <li class="wrap"><a href="/en-US/privacy/websites/#cookies">Cookies</a></li>
+                        <li class="wrap"><a href="/en-US/about/legal/">Legal</a></li>
+                        <li class="clear"><a href="/en-US/about/legal/fraud-report/">Report Trademark Abuse</a></li>
+                    </ul>
+                </div>
+                <div class="col col-3">
+                    <ul class="links-social">
+                        <li>
+                            Mozilla:
+                            <ul>
+                                <li><a href="//twitter.com/mozilla">Twitter<span> (@mozilla)</span></a></li>
+                                <li><a href="//www.facebook.com/mozilla">Facebook<span> (Mozilla)</span></a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            Firefox:
+                            <ul>
+                                <li><a href="//twitter.com/firefox">Twitter<span> (@firefox)</span></a></li>
+                                <li><a href="//www.facebook.com/Firefox">Facebook<span> (Firefox)</span></a></li>
+                                <li><a href="//www.youtube.com/firefoxchannel">YouTube<span> (firefoxchannel)</span></a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="lang-switcher">
+                    </div>
+                </div>
+            </nav>
+        </footer>
         {% endblock %}
+    {% block js %}
+    <script src="//www.mozilla.org/tabzilla/media/js/tabzilla.js"></script>
+    <script src="{% static 'js/site.js' %}"></script>
+    {% endblock %}
     </body>
 </html>
