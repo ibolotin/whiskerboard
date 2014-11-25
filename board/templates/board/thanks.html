@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+<h2>Thanks for the report!</h2>
+<p>We've created <a href="{{ bugzilla_url }}/show_bug.cgi?id={{ bug_id }}" target="_blank">Bug {{ bug_id }}</a> with your report.</p>
+{% endblock %}

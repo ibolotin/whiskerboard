@@ -1,4 +1,10 @@
-<form action='/contact/bugzilla' method='post'>{% csrf_token %}
-{{ form.as_p }}
-<input type='submit' value='Submit' />
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+<h2>Have a problem?</h2>
+<p>Please fill out the following form with a detailed description of the problem and we will look into it.</p>
+<form action='/contact' method='post'>{% csrf_token %}
+    {{ form.as_p }}
+    <input type='submit' value='Submit' />
 </form>
+{% endblock %}

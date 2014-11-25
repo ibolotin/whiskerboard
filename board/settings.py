@@ -1,4 +1,5 @@
 import os
+import settings_local
 
 PROJECT_ROOT = os.path.dirname(__file__)
 
@@ -144,7 +145,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.contrib.messages.context_processors.messages",
     'board.context_processors.current_site',
-    'board.context_processors.bugzilla_url',
 )
 
-BUGZILLA_URL = 'https://bugzilla.mozilla.org/enter_bug.cgi?product=Mozilla%20Services'
+BUGZILLA_URL = 'https://bugzilla.mozilla.org'
+BUGZILLA_PRODUCT = 'Mozilla Services'
+BUGZILLA_COMPONENT = 'Operations'
+BUGZILLA_USERNAME = settings_local.BUGZILLA_USERNAME
+BUGZILLA_PASSWORD = settings_local.BUGZILLA_PASSWORD

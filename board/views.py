@@ -1,11 +1,12 @@
 from board.models import Service, Status, Incident, Event
 from board.forms import BugzillaForm
 from collections import OrderedDict
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import FormView
 from django.template import RequestContext
 from django.db import models
 from django.shortcuts import render_to_response, get_object_or_404
+from django.conf import settings
 import calendar
 import datetime
 
@@ -142,10 +143,10 @@ class IncidentView(BoardMixin, DetailView):
 class ContactBugzillaView(FormView):
     template_name = 'board/form.html'
     form_class = BugzillaForm
-    success_url = '/thanks/'
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        form.submit()
-        return super(ContactBugzillaView, self).form_valid(form)
+        bug_id = form.submit()
+        return render_to_response('board/thanks.html', {
+            'bug_id': bug_id,
+            'bugzilla_url': settings.BUGZILLA_URL,
+        })

@@ -2,15 +2,17 @@ from django import forms
 from board.models import Service
 from django.conf import settings
 from bugzilla import Bugzilla
+from datetime import datetime
 
 
 class BugzillaForm(forms.Form):
-        name = forms.CharField(label='Your name', max_length=100)
-        email = forms.EmailField()
+        name = forms.CharField(label='Name', max_length=100)
+        email = forms.EmailField(widget=forms.EmailInput)
         service = forms.ModelChoiceField(queryset=Service.objects.all())
-        message = forms.CharField()
+        message = forms.CharField(widget=forms.Textarea)
 
         def submit(self):
+            today = datetime.now().strftime('%Y-%m-%d %H:%M')
             bugzilla = Bugzilla(url=settings.BUGZILLA_URL)
             bugzilla.login(user=settings.BUGZILLA_USERNAME,
                            password=settings.BUGZILLA_PASSWORD)
@@ -20,12 +22,14 @@ class BugzillaForm(forms.Form):
             message = self.cleaned_data['message']
             service = self.cleaned_data['service'].name
 
-            summary = '[dashboard] Issue with {0}'.format(service)
+            summary = '[dashboard] {0} Issue with {1}'.format(today, service)
 
-            description = ("From Dashboard:\n"
-                           "Name: {0}\n"
-                           "Email: {1}\n"
-                           "Message: {2}\n".format(name, email, message))
+            description = ("[dashboard]\n"
+                           "Date: {0}\n"
+                           "Name: {1}\n"
+                           "Email: {2}\n"
+                           "Message: {3}\n".format(today, name,
+                                                   email, message))
 
             bug = bugzilla.build_createbug(product=settings.BUGZILLA_PRODUCT,
                                            component=settings.BUGZILLA_COMPONENT,
@@ -37,4 +41,4 @@ class BugzillaForm(forms.Form):
                                            )
 
             result = bugzilla.createbug(bug)
-            print result.id
+            return result.id

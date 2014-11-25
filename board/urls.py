@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from board.feeds import EventFeed
-from board.views import IndexView, ServiceView, IncidentView
+from board.views import (IndexView, ServiceView, IncidentView,
+                         ContactBugzillaView)
 from board.api import (ServiceResource, CategoryResource, StatusResource,
                        IncidentsResource, EventsResource, SiteResource)
 from tastypie.api import Api
@@ -27,4 +28,6 @@ urlpatterns = patterns('',
                        url(r'^feed$', EventFeed(), name='feed'),
                        url(r'^api/', include(v1_api.urls)),
                        url(r'^admin/', include(admin.site.urls)),
+                       url(r'^contact$',
+                           ContactBugzillaView.as_view(), name='contact'),
                        )
