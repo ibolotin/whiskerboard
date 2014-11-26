@@ -29,7 +29,8 @@ INSTALLED_APPS = (
     'board',
     'colorfield',
     'tastypie',
-    'randomslugfield'
+    'randomslugfield',
+    'waffle'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -38,6 +39,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'waffle.middleware.WaffleMiddleware',
 )
 
 ######################################
@@ -143,6 +145,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.static",
+    'django.core.context_processors.request',
     "django.contrib.messages.context_processors.messages",
     'board.context_processors.current_site',
 )
