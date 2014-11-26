@@ -6,8 +6,6 @@ from datetime import datetime
 
 
 class BugzillaForm(forms.Form):
-        name = forms.CharField(label='Name', max_length=100)
-        email = forms.EmailField(widget=forms.EmailInput)
         service = forms.ModelChoiceField(queryset=Service.objects.all())
         message = forms.CharField(widget=forms.Textarea)
 
@@ -17,8 +15,6 @@ class BugzillaForm(forms.Form):
             bugzilla.login(user=settings.BUGZILLA_USERNAME,
                            password=settings.BUGZILLA_PASSWORD)
 
-            name = self.cleaned_data['name']
-            email = self.cleaned_data['email']
             message = self.cleaned_data['message']
             service = self.cleaned_data['service'].name
 
@@ -26,10 +22,7 @@ class BugzillaForm(forms.Form):
 
             description = ("[dashboard]\n"
                            "Date: {0}\n"
-                           "Name: {1}\n"
-                           "Email: {2}\n"
-                           "Message: {3}\n".format(today, name,
-                                                   email, message))
+                           "Message: {1}\n".format(today, message))
 
             bug = bugzilla.build_createbug(product=settings.BUGZILLA_PRODUCT,
                                            component=settings.BUGZILLA_COMPONENT,
