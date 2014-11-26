@@ -1,9 +1,8 @@
 import os
-import sys
 
-sys.path.append(os.path.dirname(__file__))
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings.board'
+if 'DJANGO_SETTINGS_MODULE' not in os.environ:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'board.local')
 
-import django.core.handlers.wsgi
+from django.core.wsgi import get_wsgi_application
 
-application = django.core.handlers.wsgi.WSGIHandler()
+application = get_wsgi_application()
