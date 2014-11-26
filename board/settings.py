@@ -1,5 +1,4 @@
 import os
-import settings_local
 
 PROJECT_ROOT = os.path.dirname(__file__)
 

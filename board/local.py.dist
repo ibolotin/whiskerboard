@@ -1,0 +1,18 @@
+import dj_database_url
+import pymysql
+from settings import *
+
+pymysql.install_as_MySQLdb()
+
+DEBUG = False
+ALLOWED_HOSTS = '*'
+SECRET_KEY = 'some secret key'
+
+DATABASES = {}
+DATABASES_DEFAULT_URL = ''
+DATABASES['default'] = dj_database_url.parse(DATABASES_DEFAULT_URL)
+DATABASES['default']['ENGINE'] = 'django.db.backends.mysql'
+DATABASES['default']['OPTIONS'] = {'init_command': 'SET storage_engine=InnoDB'}
+
+BUGZILLA_USERNAME = None
+BUGZILLA_PASSWORD = None
