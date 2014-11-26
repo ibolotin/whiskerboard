@@ -48,7 +48,6 @@ MIDDLEWARE_CLASSES = (
 
 DATABASES = {
     'default': {
-        #'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'whiskerboard.sqlite3',
         'USER': '',
@@ -121,7 +120,6 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 ######################################
@@ -153,5 +151,5 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 BUGZILLA_URL = 'https://bugzilla.mozilla.org'
 BUGZILLA_PRODUCT = 'Mozilla Services'
 BUGZILLA_COMPONENT = 'Operations'
-BUGZILLA_USERNAME = settings_local.BUGZILLA_USERNAME
-BUGZILLA_PASSWORD = settings_local.BUGZILLA_PASSWORD
+BUGZILLA_USERNAME = None
+BUGZILLA_PASSWORD = None
