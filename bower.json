@@ -1,0 +1,21 @@
+{
+  "name": "whiskerboard",
+  "version": "0.0.0",
+  "homepage": "https://github.com/johngruen/whiskerboard",
+  "authors": [
+    "johngruen <john.gruen@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "normalize.css": "~3.0.2",
+    "bootstrap": "~3.3.1"
+  }
+}

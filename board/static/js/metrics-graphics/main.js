@@ -45,13 +45,13 @@ $(document).ready(function() {
     var wa, mrta, mrtw;
 
     var torso = {};
-    torso.width = 500;
+    torso.width = 180;
     torso.height = 200;
     torso.right = 20;
 
     var trunk = {};
     trunk.width = 320;
-    trunk.height = 150;
+    trunk.height = 200;
     trunk.left = 35;
     trunk.right = 10;
     trunk.xax_count = 5;
