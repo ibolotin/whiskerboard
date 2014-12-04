@@ -8,7 +8,7 @@
     <div class="category-desc">
         <!--{{ category.grouper.description|safe }} -->
     </div>
-    <table id="service-list" class="table">
+    <table id="services-table" class="table">
         <thead>
             <tr>
                 <th>Service</th>
@@ -18,10 +18,10 @@
         <tbody id="services-body">
         {% for service in category.list %}
         <tr>
-            <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a>&nbsp;<a href="{{ service.url }}" data-tooltip='{{ service.long_description }}' target='_blank'><span class='circlequestion'></span></a></td>
+            <td>{{ service.name }}</td>
             {% with service.events.latest.status as latest_status %}
             {% if latest_status %}
-            <td class="status highlight">
+            <td class="status bg-danger">
                 {{ latest_status.description }}
             </td>
             {% else %}
@@ -37,24 +37,21 @@
     {% endfor %}
 </div>
 <br>
-<div id='recent-events'>
+<div id='event-log'>
     <h2>Recent Events</h2>
     {% for day, incidents in dates.items %}
     {% if incidents|length == 0 %}
-    <div class="no-events">{{ day|date:"M j, Y" }}: No incidents reported.</div>
+    <div class="null event">{{ day|date:"M j, Y" }}: No incidents reported.</div>
     {% else %}
     {% for incident in incidents %}
-    <div class="bad-events">
-    <a style="text-decoration: none;" href="/incidents/{{ incident.slug }}">
-        {{ incident.name }}
-        Services: {{ incident.services }}
-   
-        {% for item_event in incident.events.all %}
-            {{ item_event.status.color }}
-            {{ item_event.message|safe }}
-            {{ item_event.start|date:"M j, H:i T" }}
-        {% endfor %}
-    </a>
+    <div class="danger event">
+        {{ day|date:"M j, Y" }}:
+            <h6>{{ incident.name }}</h6>
+            <a href="/incidents/{{ incident.slug }}"><h3>Services: {{ incident.services }}</h3></a>
+            {% for item_event in incident.events.all %}
+                <p>{{ item_event.message|safe }}</p>
+                <p>{{ item_event.start|date:"M j, H:i T" }}</p>
+            {% endfor %}
     </div>
     {% endfor %}
     {% endif %}

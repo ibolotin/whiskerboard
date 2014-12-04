@@ -19,21 +19,36 @@
 
         {% block css %}
         <link rel="stylesheet" href="//code.cdn.mozilla.net/fonts/fira.css">
-        <link rel="stylesheet" type="text/css" href="{% static 'css/normalize.css' %}" media="screen" />
-        <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}" media="screen" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/lib/bootstrap.css' %}" media="screen" />
+        <link rel="stylesheet" type="text/css" href="//www.mozilla.org/tabzilla/media/css/tabzilla.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" media="screen" />
         {% endblock %}
         {% block site_css %}{% endblock %}
 
         {% block extrahead %}{% endblock %}
     </head>
     <body>
-        <nav id="main-nav"></nav>
-        <div id="wrapper">
+        <nav class="navbar navbar-default dark" role="navigation">
+            <div class="container">
+            
+              <a class="navbar-brand" href="#">
+                <img alt="Brand" src="{% static 'images/logo@2x.png' %}" width="20px" height="20px">
+              </a>
+ <a href="http://www.mozilla.org/" id="tabzilla">Mozilla</a>
+                <ul role="menu" class="nav navbar-nav">
+                    <li role="menuitem"><a href="//www.mozilla.org/en-US/mission/">Mission</a></li>
+                    <li role="menuitem"><a href="//www.mozilla.org/en-US/about/">About</a></li>
+                    <li role="menuitem"><a href="//www.mozilla.org/en-US/products/">Products</a></li>
+                    <li role="menuitem" class="last"><a href="//www.mozilla.org/en-US/contribute/">Get Involved</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container">
             {% block site_header %}
             {% block breadcrumbs %}
-            <header id="main-header">
+            <div class="jumbotron">
                 <h1><a href="/">{{ current_site.name }}</a></h1>
-            </header>
+            </div>
             {% endblock %}
             {% endblock %}
 
@@ -42,22 +57,22 @@
                 {% endblock %}
             </div>
             <!-- FIXME -->
-            <br>
             {% block bugzilla %}
-            <nav class="menu-bar billboard">
-                <a href="/contact" target="_blank">Have a problem? Report it!</a>
-            </nav>
+                <a href="/contact" target="_blank">
+                    <button class="center-block btn btn-primary">Have a problem? Report it</button>
+                </a>
             {% endblock %}
         </div>
 
         {% block site_footer %}
-        <footer id="colophon" class="">
+        <footer id="colophon" class="footer">
+            <div class="container">
             <nav class="row">
-                <div class="col col-1">
+                <div class="col-md-7">
                     <h1 class="logo"><a href="/en-US/">Mozilla</a></h1>
-                    <p class="license">Portions of this content are &copy;1998–2014 by individual mozilla.org contributors. Content available under a <a href="/en-US/foundation/licensing/website-content/">Creative Commons license</a>.</p>
+                    <p class="license">Portions of this content are &copy;1998–2014 by individual mozilla.org contributors. <br> Content available under a <a href="/en-US/foundation/licensing/website-content/">Creative Commons license</a>.</p>
                 </div>
-                <div class="col col-2">
+                <div class="col-md-3">
                     <ul class="links-join">
                         <li><a href="/en-US/contact/spaces/">Contact Us</a></li>
                         <li class="wrap"><a href="/en-US/about/partnerships/">Partner with Us</a></li>
@@ -72,7 +87,7 @@
                         <li class="clear"><a href="/en-US/about/legal/fraud-report/">Report Trademark Abuse</a></li>
                     </ul>
                 </div>
-                <div class="col col-3">
+                <div class="col-md-2">
                     <ul class="links-social">
                         <li>
                             Mozilla:
@@ -94,6 +109,7 @@
                     </div>
                 </div>
             </nav>
+            </div>
         </footer>
         {% endblock %}
     {% block js %}

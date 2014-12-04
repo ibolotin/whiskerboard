@@ -1,0 +1,116 @@
+@import "variables.less";
+
+html, body {
+  font-family: 'Fira Sans',sans-serif;
+}
+
+h1,h2,h3,h4,h4,h6 {
+  font-wieght: 400 !important;
+}
+
+.jumbotron {
+  padding: 10px 0;
+  a {
+    text-decoration: none;
+    color: @gray-dark;
+  }
+}
+
+#services-table {
+  background: #fff;
+  border: 1px solid @gray;
+  td,
+  th {
+    font-size: 18px;
+    padding: 10px !important;
+    border: 1px solid @gray;
+  }
+}
+
+#event-log {
+  h2 {
+    padding: 20px;
+    background: white;
+    border: 1px solid @gray;
+    margin:0;
+  }
+  .event {
+    margin-left: 20px;
+    padding: 20px;
+    border-left: 1px solid @gray;
+    position: relative;
+    &:before {
+      content: '';
+      display: block;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      position: absolute;
+      left: -8px;
+      top: 22px !important;
+    } 
+    &.null{
+      &:before {
+        background: @gray;
+        border: 1px solid @gray-dark;
+      }
+    }
+    &.danger{
+      border: 1px solid @gray;
+      h3,h6,p {
+        font-weight: 300;
+        margin: 10px;
+      }
+      background: #fff;
+      padding: 20px;
+      &:before {
+        background: @brand-danger;
+      }
+    }      
+  }
+}
+
+.service-status {
+  padding: 20px;
+  color: #fff;
+  h3,p {
+    margin: 5px 0;
+  }
+  &.null {
+    background: @brand-success;
+  }
+  &.down {
+    background: @brand-danger;
+  }
+}
+
+.white-box {
+  background: #fff;
+  padding: 20px;
+}
+
+.metric {
+  margin: 0 auto;
+}
+
+#metrics-area {
+  margin: 50px 0;
+  padding: 20px 0;
+  background: #fff;
+}
+
+
+.footer {
+  margin: 50px 0 0 0;
+  padding: 50px 0;
+  background: @gray-dark;
+  color: @gray;
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  a {
+    color: @gray-light;
+  }
+}
