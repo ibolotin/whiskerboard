@@ -1,0 +1,109 @@
+html,
+body {
+  font-family: 'Fira Sans', sans-serif;
+}
+h1,
+h2,
+h3,
+h4,
+h4,
+h6 {
+  font-wieght: 400 !important;
+}
+.jumbotron {
+  padding: 10px 0;
+}
+.jumbotron a {
+  text-decoration: none;
+  color: #424f5a;
+}
+#services-table {
+  background: #fff;
+  border: 1px solid #c1c1c1;
+}
+#services-table td,
+#services-table th {
+  font-size: 18px;
+  padding: 10px !important;
+  border: 1px solid #c1c1c1;
+}
+#event-log h2 {
+  padding: 20px;
+  background: white;
+  border: 1px solid #c1c1c1;
+  margin: 0;
+}
+#event-log .event {
+  margin-left: 20px;
+  padding: 20px;
+  border-left: 1px solid #c1c1c1;
+  position: relative;
+}
+#event-log .event:before {
+  content: '';
+  display: block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  position: absolute;
+  left: -8px;
+  top: 22px !important;
+}
+#event-log .event.null:before {
+  background: #c1c1c1;
+  border: 1px solid #424f5a;
+}
+#event-log .event.danger {
+  border: 1px solid #c1c1c1;
+  background: #fff;
+  padding: 20px;
+}
+#event-log .event.danger h3,
+#event-log .event.danger h6,
+#event-log .event.danger p {
+  font-weight: 300;
+  margin: 10px;
+}
+#event-log .event.danger:before {
+  background: #d74345;
+}
+.service-status {
+  padding: 20px;
+  color: #fff;
+}
+.service-status h3,
+.service-status p {
+  margin: 5px 0;
+}
+.service-status.null {
+  background: #74bf43;
+}
+.service-status.down {
+  background: #d74345;
+}
+.white-box {
+  background: #fff;
+  padding: 20px;
+}
+.metric {
+  margin: 0 auto;
+}
+#metrics-area {
+  margin: 50px 0;
+  padding: 20px 0;
+  background: #fff;
+}
+.footer {
+  margin: 50px 0 0 0;
+  padding: 50px 0;
+  background: #424f5a;
+  color: #c1c1c1;
+}
+.footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer a {
+  color: #f8f8f8;
+}

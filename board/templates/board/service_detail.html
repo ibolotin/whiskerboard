@@ -6,10 +6,7 @@
 {% block css %}
 {{ block.super }}
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet" type="text/css">
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-
 <link href="{% static 'css/metrics-graphics/metricsgraphics.css' %}" rel="stylesheet" type="text/css" id="light">
-<link href="" rel="stylesheet" type="text/css" id="dark">
 {% endblock %}
 
 {% block js %}
@@ -22,85 +19,93 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<hgroup id="main-feature">
-    <h1><a href="/" style="text-decoration: none;">{{ current_site.name }}</a></h1>
-</hgroup>
+<header class="jumbotron">
+    <h1>{{ current_site.name }}</h1>
+</header>
 {% endblock %}
 
 {% block content %}
-<div id="webservices" class="center frame">
-    <h1 class="large">{{ service.name }}</h1>
+<div id="webservices">
+    <h2>{{ service.name }}</h2>
     <p id="service-desc">{{ service.description|safe }}</p>
+
     {% if no_incidents %}
-    <div style="background: {{ default.color }}; box-shadow: 0 0 0 1px black inset; padding: 6px; border-radius: 10px; cursor: pointer;" class="billboard">
+        <div class="service-status null">
+            <h3>The service is up</h3>
+            <span class="text-right">updated X minutes ago</span>
+        </div>
     {% else %}
-    <div style="background: {{ service.events.latest.status.color }}; box-shadow: 0 0 0 1px black inset; padding: 10px; border-radius: 10px; cursor: pointer;" class="billboard">
+        <div class="service-status down">
+            <h3>{{ service.events.latest.status.description }}</h3>
+            <span class="text-right">updated X minutes ago</span>
+        </div>
     {% endif %}
-    {% if no_incidents %}
-        <!-- FIXME -->
-        <h2><font color="white">The service is up</font></h2><font class="small" style="float: right" color="white">refreshed X minutes ago</font>
-    {% else %}
-        <h2><font color="white">{{ service.events.latest.status.description }}</font></h2><font class="small" style="float: right" color="white">updated X minutes ago</font>
-    {% endif %}
+</div>
+
+<h3 class="date-range">
+{% if start_date %}
+    {{ start_date|date:"n/j/Y" }}
+{% endif %}
+</h3>
+
+<div id="metrics-area">
+    <div class="row">
+        <div class="col-4">
+            <div id="metric1" class="metric"></div>
+        </div>
+        <div class="col-4">
+            <div id="metric2" class="metric"></div>
+        </div>
+        <div class="col-4">
+            <div id="metric3" class="metric"></div>
+        </div>
     </div>
-    <h3 class="date-range">
-    {% if start_date %}
-        {{ start_date|date:"n/j/Y"  }}
-    {% endif %}
-    </h3>
-    <h1 style="margin-top: 50px;"><span style="float: left">System Metrics</span>
-        <div style="float: right" class="button-list small text-center modify-time-period-controls">
-            <button type="button" class="button active"
+    <br>
+    <div class="row">
+        <div class="col-md-12 text-center">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default"
                     data-time_period="1">Day</button>
-            <button type="button" class="button"
+            <button type="button" class="btn btn-default"
                     data-time_period="7">Week</button>
-            <button type="button" class="button"
+            <button type="button" class="btn btn-default"
                     data-time_period="30">Month</button>
         </div>
-    </h1>
-    <div style="margin-top: 100px;" id="container">
-        <div>
-            <div id="metric1"></div>
-        </div>
-        <div>
-            <div id="metric2"></div>
-        </div>
-        <div>
-            <div id="metric3"></div>
-        </div>
     </div>
     </div>
-    <div id='recent-events' align="left">
-        <h2>Recent Events</h2>
-        {% if no_incidents %}
-        {{ no_incidents }}
-        {% endif %}
-    {% for day, incidents in dates.items %}
-    {% if incidents|length == 0 %}
-    {% else %}
-    <div class="status-day font-regular">
-        <div class="date">{{ day|date:"M j, Y" }}</div>
-    </div>
-    {% for incident in incidents %}
-    <div class="incident-container">
-        <div class="incident-title">
-            <a href="/incidents/{{ incident.slug }}">{{ incident.name }}</a>
-        </div>
-        <small>Services: {{ incident.services }}</small>
-        {% for item_event in incident.events.all %}
-        <div class="updates-container">
-            <div class="update font-regular completed">
-                <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
-                <br>
-                <small>
-                    {{ item_event.start|date:"M j, H:i T" }}
-                </small>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endfor %}
+</div>
+
+<div id="recent-events">
+    <h2>Recent Events</h2>
+    {% if no_incidents %}
+    {{ no_incidents }}
     {% endif %}
+{% for day, incidents in dates.items %}
+{% if incidents|length == 0 %}
+{% else %}
+<div class="status-day font-regular">
+    <div class="date">{{ day|date:"M j, Y" }}</div>
+</div>
+{% for incident in incidents %}
+<div class="incident-container">
+    <div class="incident-title">
+        <a href="/incidents/{{ incident.slug }}">{{ incident.name }}</a>
+    </div>
+    <small>Services: {{ incident.services }}</small>
+    {% for item_event in incident.events.all %}
+    <div class="updates-container">
+        <div class="update font-regular completed">
+            <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
+            <br>
+            <small>
+                {{ item_event.start|date:"M j, H:i T" }}
+            </small>
+        </div>
+    </div>
     {% endfor %}
+</div>
+{% endfor %}
+{% endif %}
+{% endfor %}
 </div>
 {% endblock %}

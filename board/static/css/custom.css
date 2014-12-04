@@ -12,7 +12,7 @@ a {
 }
 
 body {
-  background: #fff;
+  background: #f2f2f2;
   margin: 0;
 }
 
@@ -22,9 +22,9 @@ body {
   margin: 0 0 50px 0;
 }
 
-#wrapper {
+.wrapper {
+  padding: 0 10px;
   width: 960px;
-  padding: 10px;
   margin: 0 auto;
 }
 
@@ -74,6 +74,7 @@ td.highlight {
   margin: 0;
   padding: 20px;
   position: relative;
+  margin: 0 0 0 20px;
 }
 
 .no-events:after {
@@ -104,6 +105,7 @@ td.highlight {
   top: 20px;
   background: #d99;
 }
+
 .bad-events a {
   background: #fff;
   padding:20px;
@@ -117,6 +119,14 @@ td.highlight {
   border-left: 14 solid #ccc;
   border-right: 14px solid #ccc;
   border-bottom: -10px solid #ccc;
+}
+
+footer#colophon {
+  background: #333;
+}
+
+footer#colophon a {
+  color: #ccc;
 }
 
 .color-no-incidents {
