@@ -8,7 +8,7 @@
     <div class="category-desc">
         <!--{{ category.grouper.description|safe }} -->
     </div>
-    <table style="font-size: 22px; width:100%; margin-left:auto; margin-right:auto;" id="service-list" class="table">
+    <table id="service-list" class="table">
         <thead>
             <tr>
                 <th>Service</th>
@@ -19,17 +19,17 @@
         {% for service in category.list %}
         <tr>
             <td><a href="{{ service.get_absolute_url }}">{{ service.name }}</a>&nbsp;<a href="{{ service.url }}" data-tooltip='{{ service.long_description }}' target='_blank'><span class='circlequestion'></span></a></td>
+            {% with service.events.latest.status as latest_status %}
+            {% if latest_status %}
             <td class="status highlight">
-                {% with service.events.latest.status as latest_status %}
-                {% if latest_status %}
-                <font color="{{ latest_status.color }}">{{ latest_status.description }}</font>
-                <!-- <img src="{% static 'images/status/' %}{{ latest_status.image }}.png" alt="{{ latest_status }} "/> -->
-                {% else %}
-                <font color="{{ default.color }}">{{ default.description }}</font>
-                <!-- <img src="{% static 'images/status/' %}{{ default.image }}.png" alt="{{ default.name }} "/> -->
-                {% endif %}
-                {% endwith %}
+                {{ latest_status.description }}
             </td>
+            {% else %}
+            <td class="status">
+                {{ default.description }}
+            </td>
+            {% endif %}
+            {% endwith %}
         </tr>
         {% endfor %}
         </tbody>
@@ -40,28 +40,21 @@
 <div id='recent-events'>
     <h2>Recent Events</h2>
     {% for day, incidents in dates.items %}
-    <div class="status-day font-regular">
-        <div class="date">{{ day|date:"M j, Y" }}</div>
-    </div>
     {% if incidents|length == 0 %}
-    <small>No incidents reported.</small>
+    <div class="no-events">{{ day|date:"M j, Y" }}: No incidents reported.</div>
     {% else %}
     {% for incident in incidents %}
-    <div class="incident-container">
-        <div class="incident-title">
-            <a style="text-decoration: none;" href="/incidents/{{ incident.slug }}">{{ incident.name }}</a>
-        </div>
-        <small>Services: {{ incident.services }}</small>
+    <div class="bad-events">
+    <a style="text-decoration: none;" href="/incidents/{{ incident.slug }}">
+        {{ incident.name }}
+        Services: {{ incident.services }}
+   
         {% for item_event in incident.events.all %}
-        <div class="updates-container">
-            <div class="update font-regular completed">
-                <strong><font color="{{ item_event.status.color }}">{{ item_event.message|safe }}</font></strong></br>
-                <small>
-                    {{ item_event.start|date:"M j, H:i T" }}
-                </small>
-            </div>
-        </div>
+            {{ item_event.status.color }}
+            {{ item_event.message|safe }}
+            {{ item_event.start|date:"M j, H:i T" }}
         {% endfor %}
+    </a>
     </div>
     {% endfor %}
     {% endif %}
