@@ -22,6 +22,25 @@ You might need to install [pip](http://www.pip-installer.org/en/latest/installin
 Back on the admin home page, click on "services" and add the things you want to report the status of (website, API etc).
 To change the status of a service add an event for it.
 
+CSS
+---
+
+The CSS for this site is written in LESS and has several dependencies. To edit you will need NPM, Bower and Grunt installed. 
+
+    brew install npm
+    npm install -g bower
+    npm install -g grunt
+
+To modify CSS, begin by installing npm and bower dependencies from the `whiskerboard` directory.
+
+    npm install
+    bower install
+
+The only files that should be maipluated are `application_styles/main.less` and `applicaition_styles/variables.less`. 
+
+To compile changes to LESS, use the `grunt` command.
+
+
 API Documentation
 -----------------
 

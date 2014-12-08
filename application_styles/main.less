@@ -1,78 +1,109 @@
 @import "variables.less";
 
+
 html, body {
-  font-family: 'Fira Sans',sans-serif;
+  font-family: 'Fira Sans', sans-serif;
 }
 
-h1,h2,h3,h4,h4,h6 {
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.site-content {
+  flex: 1;
+}
+
+h1,
+h2,
+h3,
+h4,
+h4,
+h6 {
   font-wieght: 400 !important;
 }
 
 .jumbotron {
   padding: 10px 0;
   a {
-    text-decoration: none;
     color: @gray-dark;
+    text-decoration: none;
   }
 }
 
 #services-table {
-  background: #fff;
+  background: white;
   border: 1px solid @gray;
   td,
   th {
+    border-bottom: 1px dotted @gray;
+    border: none;
     font-size: 18px;
-    padding: 10px !important;
-    border: 1px solid @gray;
+    padding: 10px;
+    vertical-align: middle;
+    span {
+      border-radius: 16px;
+      display: block;
+      padding: 12px;
+    }
+  }
+  td {
+    border-radius: 10px;
+    padding: 15px;
+  }
+}
+
+#contact-block {
+  margin: 50px 0;
+  a {
+    display: block;
+    margin: 0 auto;
+  }
+  button {
+    display: block;
+    margin: 0 auto;
+    text-decoration: none;
+    transition: all 250ms;
+    width: 100%;
   }
 }
 
 #event-log {
   h2 {
-    padding: 20px;
-    background: white;
-    border: 1px solid @gray;
-    margin:0;
+    font-size: 48px;
+    margin-bottom: 30px;
+  }
+  .event-date {
+    margin: 0 0 20px 0;
+    .date {
+      border: 1px solid @gray;
+      margin-left: 0px;
+      padding: 5px;
+    }
   }
   .event {
-    margin-left: 20px;
-    padding: 20px;
-    border-left: 1px solid @gray;
-    position: relative;
-    &:before {
-      content: '';
-      display: block;
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      position: absolute;
-      left: -8px;
-      top: 22px !important;
-    } 
-    &.null{
-      &:before {
-        background: @gray;
-        border: 1px solid @gray-dark;
-      }
-    }
-    &.danger{
-      border: 1px solid @gray;
-      h3,h6,p {
-        font-weight: 300;
-        margin: 10px;
-      }
-      background: #fff;
-      padding: 20px;
-      &:before {
-        background: @brand-danger;
-      }
-    }      
+    background: white;
+    border-bottom: 1px solid @gray;
+    border-radius: @border-radius-base;
+    margin: 10px 0;
+    padding: 10px;
+  }
+  h3 {
+    font-weight: 300;
+    margin: 10px 0;
+  }
+  p {
+    margin: 0;
+  }
+  .event-desc {
+    max-width: 60%;
   }
 }
 
 .service-status {
+  color: white;
   padding: 20px;
-  color: #fff;
   h3,p {
     margin: 5px 0;
   }
@@ -85,7 +116,7 @@ h1,h2,h3,h4,h4,h6 {
 }
 
 .white-box {
-  background: #fff;
+  background: white;
   padding: 20px;
 }
 
@@ -94,11 +125,19 @@ h1,h2,h3,h4,h4,h6 {
 }
 
 #metrics-area {
+  background: white;
   margin: 50px 0;
   padding: 20px 0;
-  background: #fff;
 }
 
+#bug-submission {
+  background: white;
+  border: 1px solid @gray;
+  padding: 20px;
+  label {
+    display: block;
+  }
+}
 
 .footer {
   margin: 50px 0 0 0;
@@ -114,3 +153,4 @@ h1,h2,h3,h4,h4,h6 {
     color: @gray-light;
   }
 }
+
