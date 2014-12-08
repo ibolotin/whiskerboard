@@ -1,17 +1,6 @@
-a,
-a:active,
-a:visited {
-    color: steelblue;
-    text-decoration: none;
-}
-
-a:hover {
-    color: steelblue;
-}
-
 .active_datapoint {
     fill: black;
-    font-size: 11px;
+    font-size: 0.9rem;
     font-weight: 400;
 }
 
@@ -45,6 +34,15 @@ a:hover {
     fill: #9e9efc;
 }
 
+.barplot .bar-prediction {
+    fill: #5b5b5b;
+}
+
+.barplot .bar-baseline {
+    stroke: #5b5b5b;
+    stroke-width: 2;
+}
+
 .baselines line {
     opacity: 0.2;
     shape-rendering: crispEdges;
@@ -54,35 +52,13 @@ a:hover {
 
 .baselines text {
     fill: black;
-    font-size: 9px;
+    font-size: 0.7rem;
     opacity: 0.5;
     stroke: none;
 }
 
-.btn-group {
-    display: inline-block;
-    margin-left: 3px;
-    margin-right: 3px;
-}
-
-.btn-group span.which-button {
-    font-weight: 300;
-    color: darkgray;
-}
-
-.btn-group span.title {
-    margin-left: 8px;
-    margin-right: 8px;
-}
-
-.chart_title {
-    font-size: 18px;
-    font-weight: 500;
-    text-align: center;
-}
-
 .chart_title .popover {
-    font-size: 12px;
+    font-size: 0.95rem;
 }
 
 .chart_title .popover-content {
@@ -90,13 +66,21 @@ a:hover {
     line-height: 17px;
 }
 
-.chart_title .popover.top {
+.chart_title .popover.top,
+.data-table .popover.top {
     margin-top: 0;
+}
+
+.chart_title {
+    cursor: default;
+    font-size: 1.8rem;
+    padding-top: 8px;
+    text-align: center;
 }
 
 .chart_title .fa {
     color: #ccc;
-    font-size: 14px;
+    font-size: 1.2rem;
     padding-left: 4px;
     vertical-align: top;
 }
@@ -106,19 +90,45 @@ a:hover {
 }
 
 circle {
-    /*fill: #0000ff;*/
     opacity: 0.85;
 }
 
-#description {
-    margin: auto;
-    margin-bottom: 50px;
-    width: 100%;
+.data-table {
+    margin-top: 30px;
 }
 
-.divider {
-    color: #000000;
-    opacity: 0.2;
+.data-table thead tr th {
+    border-bottom: 1px solid darkgray;
+    cursor: default;
+    font-size: 1.1rem;
+    font-weight: normal;
+    padding: 5px 5px 8px 5px;
+    text-align: right;
+}
+
+.data-table thead tr th .fa {
+    color: #ccc;
+    padding-left: 4px;
+}
+
+.data-table thead tr th .popover {
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+.data-table .secondary-title {
+    color: darkgray;
+}
+
+.data-table tbody tr td {
+    margin: 2px;
+    padding: 5px;
+    vertical-align: top;
+}
+
+.data-table  tbody tr td.table-text {
+    opacity: 0.8;
+    padding-left: 30px;
 }
 
 .extended-y-ticks svg .y-axis line {
@@ -197,7 +207,7 @@ circle {
 }
 
 .legend {
-    font-size: 11px;
+    font-size: 0.9rem;
     padding: 25px 0 15px 0;
 }
 
@@ -215,7 +225,7 @@ circle {
 
 .markers text {
     fill: black;
-    font-size: 9px;
+    font-size: 0.7rem;
     opacity: 0.5;
     stroke: none;
 }
@@ -269,36 +279,6 @@ text {
     opacity: 0.8;
 }
 
-#torso {
-    margin: 0 auto;
-    text-align: center;
-    width: 100%;
-}
-
-#torso div {
-    display: inline-block;
-}
-
-#trunk {
-    margin-top: 40px;
-}
-
-#trunk h2 {
-    font-size: 15px;
-}
-
-#trunk h2.trunk-title {
-    font-size: 25px;
-    font-weight: 300;
-    text-transform: uppercase;
-}
-
-.trunk-section {
-    border-top: 1px solid #ccc;
-    padding-bottom: 25px;
-    padding-top: 15px;
-}
-
 .voronoi path {
     fill: none;
     pointer-events: all;
@@ -323,14 +303,14 @@ text {
 .y-axis text,
 .histogram .axis text {
     fill: black;
-    font-size: 11px;
+    font-size: 0.9rem;
     opacity: 0.5;
 }
 
 .x-axis .label,
 .y-axis .label,
 .axis .label {
-    font-size: 10px;
+    font-size: 0.8rem;
     text-transform: uppercase;
     font-weight: 400;
 }
@@ -338,27 +318,27 @@ text {
 .x-axis-small text,
 .y-axis-small text,
 .active-datapoint-small {
-    font-size: 8px;
+    font-size: 0.6rem;
 }
 
 .x-axis-small .label,
 .y-axis-small .label {
-    font-size: 8.5px;
+    font-size: 0.65rem;
 }
 
 .year-marker text {
     fill: black;
-    font-size: 9px;
+    font-size: 0.7rem;
     opacity: 0.5;
 }
 
 .year-marker line {
-    shape-rendering: crispEdges;
     opacity: 0.2;
+    shape-rendering: crispEdges;
     stroke: black;
     stroke-width: 1;
 }
 
 .year-marker-small text {
-    font-size: 8px;
+    font-size: 0.6rem;
 }

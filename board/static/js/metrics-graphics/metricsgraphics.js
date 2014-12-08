@@ -1,11 +1,12 @@
-'use strict';
+
 
 var charts = {};
 var globals = {};
 globals.link = false;
-globals.version = "1.0";
+globals.version = "1.1";
 
 function data_graphic() {
+    'use strict';
     var moz = {};
     moz.defaults = {};
     moz.defaults.all = {
@@ -34,7 +35,8 @@ function data_graphic() {
         max_x: null,
         max_y: null,
         min_x: null,
-        min_y: null,
+        min_y: null,                  // if set, y axis starts at an arbitrary value
+        min_y_from_data: false,       // if set, y axis will start at minimum value rather than at 0
         point_size: 2.5,              // the size of the dot that appears on a line on mouse-over
         x_accessor: 'date',
         xax_units: '',
@@ -44,6 +46,8 @@ function data_graphic() {
         y_accessor: 'value',
         y_label: '',
         yax_units: '',
+        x_rug: false,
+        y_rug: false,
         transition_on_update: true,
         rollover_callback: null,
         show_rollover_text: true,
@@ -84,7 +88,7 @@ function data_graphic() {
         max_data_size: null            // explicitly specify the the max number of line series, for use with custom_line_color_map
     }
     moz.defaults.point = {
-        buffer:16,
+        buffer: 16,
         ls: false,
         lowess: false,
         point_size: 2.5,
@@ -114,9 +118,9 @@ function data_graphic() {
         baseline_accessor: null,
         predictor_accessor: null,
         predictor_proportion: 5,
-        dodge_acessor: null,
+        dodge_accessor: null,
         binned: true,
-        padding_percentage: .1,
+        padding_percentage: 0,
         outer_padding_percentage: .1,
         height: 500,
         top: 20,
@@ -128,8 +132,10 @@ function data_graphic() {
         bottom: 0,
         right: 0,
         left: 0,
+        legend_target: '',
         width: 350,
-        height: 220
+        height: 220,
+        missing_text: 'Data currently missing or unavailable'
     }
 
     var args = arguments[0];
@@ -170,15 +176,643 @@ function data_graphic() {
     return args.data;
 }
 
+/*!
+ * Bootstrap v3.3.1 (http://getbootstrap.com)
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+
+/*!
+ * Generated using the Bootstrap Customizer (http://getbootstrap.com/customize/?id=698666b23215c58f23d4)
+ * Config saved to config.json and https://gist.github.com/698666b23215c58f23d4
+ */
+if (typeof jQuery === 'undefined') {
+  throw new Error('Bootstrap\'s JavaScript requires jQuery')
+}
++function ($) {
+  var version = $.fn.jquery.split(' ')[0].split('.')
+  if ((version[0] < 2 && version[1] < 9) || (version[0] == 1 && version[1] == 9 && version[2] < 1)) {
+    throw new Error('Bootstrap\'s JavaScript requires jQuery version 1.9.1 or higher')
+  }
+}(jQuery);
+
+/* ========================================================================
+ * Bootstrap: tooltip.js v3.3.1
+ * http://getbootstrap.com/javascript/#tooltip
+ * Inspired by the original jQuery.tipsy by Jason Frame
+ * ========================================================================
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+  
+  if(typeof $().tooltip == 'function')
+    return true;
+
+  // TOOLTIP PUBLIC CLASS DEFINITION
+  // ===============================
+
+  var Tooltip = function (element, options) {
+    this.type       =
+    this.options    =
+    this.enabled    =
+    this.timeout    =
+    this.hoverState =
+    this.$element   = null
+
+    this.init('tooltip', element, options)
+  }
+
+  Tooltip.VERSION  = '3.3.1'
+
+  Tooltip.TRANSITION_DURATION = 150
+
+  Tooltip.DEFAULTS = {
+    animation: true,
+    placement: 'top',
+    selector: false,
+    template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+    trigger: 'hover focus',
+    title: '',
+    delay: 0,
+    html: false,
+    container: false,
+    viewport: {
+      selector: 'body',
+      padding: 0
+    }
+  }
+
+  Tooltip.prototype.init = function (type, element, options) {
+    this.enabled   = true
+    this.type      = type
+    this.$element  = $(element)
+    this.options   = this.getOptions(options)
+    this.$viewport = this.options.viewport && $(this.options.viewport.selector || this.options.viewport)
+
+    var triggers = this.options.trigger.split(' ')
+
+    for (var i = triggers.length; i--;) {
+      var trigger = triggers[i]
+
+      if (trigger == 'click') {
+        this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
+      } else if (trigger != 'manual') {
+        var eventIn  = trigger == 'hover' ? 'mouseenter' : 'focusin'
+        var eventOut = trigger == 'hover' ? 'mouseleave' : 'focusout'
+
+        this.$element.on(eventIn  + '.' + this.type, this.options.selector, $.proxy(this.enter, this))
+        this.$element.on(eventOut + '.' + this.type, this.options.selector, $.proxy(this.leave, this))
+      }
+    }
+
+    this.options.selector ?
+      (this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
+      this.fixTitle()
+  }
+
+  Tooltip.prototype.getDefaults = function () {
+    return Tooltip.DEFAULTS
+  }
+
+  Tooltip.prototype.getOptions = function (options) {
+    options = $.extend({}, this.getDefaults(), this.$element.data(), options)
+
+    if (options.delay && typeof options.delay == 'number') {
+      options.delay = {
+        show: options.delay,
+        hide: options.delay
+      }
+    }
+
+    return options
+  }
+
+  Tooltip.prototype.getDelegateOptions = function () {
+    var options  = {}
+    var defaults = this.getDefaults()
+
+    this._options && $.each(this._options, function (key, value) {
+      if (defaults[key] != value) options[key] = value
+    })
+
+    return options
+  }
+
+  Tooltip.prototype.enter = function (obj) {
+    var self = obj instanceof this.constructor ?
+      obj : $(obj.currentTarget).data('bs.' + this.type)
+
+    if (self && self.$tip && self.$tip.is(':visible')) {
+      self.hoverState = 'in'
+      return
+    }
+
+    if (!self) {
+      self = new this.constructor(obj.currentTarget, this.getDelegateOptions())
+      $(obj.currentTarget).data('bs.' + this.type, self)
+    }
+
+    clearTimeout(self.timeout)
+
+    self.hoverState = 'in'
+
+    if (!self.options.delay || !self.options.delay.show) return self.show()
+
+    self.timeout = setTimeout(function () {
+      if (self.hoverState == 'in') self.show()
+    }, self.options.delay.show)
+  }
+
+  Tooltip.prototype.leave = function (obj) {
+    var self = obj instanceof this.constructor ?
+      obj : $(obj.currentTarget).data('bs.' + this.type)
+
+    if (!self) {
+      self = new this.constructor(obj.currentTarget, this.getDelegateOptions())
+      $(obj.currentTarget).data('bs.' + this.type, self)
+    }
+
+    clearTimeout(self.timeout)
+
+    self.hoverState = 'out'
+
+    if (!self.options.delay || !self.options.delay.hide) return self.hide()
+
+    self.timeout = setTimeout(function () {
+      if (self.hoverState == 'out') self.hide()
+    }, self.options.delay.hide)
+  }
+
+  Tooltip.prototype.show = function () {
+    var e = $.Event('show.bs.' + this.type)
+
+    if (this.hasContent() && this.enabled) {
+      this.$element.trigger(e)
+
+      var inDom = $.contains(this.$element[0].ownerDocument.documentElement, this.$element[0])
+      if (e.isDefaultPrevented() || !inDom) return
+      var that = this
+
+      var $tip = this.tip()
+
+      var tipId = this.getUID(this.type)
+
+      this.setContent()
+      $tip.attr('id', tipId)
+      this.$element.attr('aria-describedby', tipId)
+
+      if (this.options.animation) $tip.addClass('fade')
+
+      var placement = typeof this.options.placement == 'function' ?
+        this.options.placement.call(this, $tip[0], this.$element[0]) :
+        this.options.placement
+
+      var autoToken = /\s?auto?\s?/i
+      var autoPlace = autoToken.test(placement)
+      if (autoPlace) placement = placement.replace(autoToken, '') || 'top'
+
+      $tip
+        .detach()
+        .css({ top: 0, left: 0, display: 'block' })
+        .addClass(placement)
+        .data('bs.' + this.type, this)
+
+      this.options.container ? $tip.appendTo(this.options.container) : $tip.insertAfter(this.$element)
+
+      var pos          = this.getPosition()
+      var actualWidth  = $tip[0].offsetWidth
+      var actualHeight = $tip[0].offsetHeight
+
+      if (autoPlace) {
+        var orgPlacement = placement
+        var $container   = this.options.container ? $(this.options.container) : this.$element.parent()
+        var containerDim = this.getPosition($container)
+
+        placement = placement == 'bottom' && pos.bottom + actualHeight > containerDim.bottom ? 'top'    :
+                    placement == 'top'    && pos.top    - actualHeight < containerDim.top    ? 'bottom' :
+                    placement == 'right'  && pos.right  + actualWidth  > containerDim.width  ? 'left'   :
+                    placement == 'left'   && pos.left   - actualWidth  < containerDim.left   ? 'right'  :
+                    placement
+
+        $tip
+          .removeClass(orgPlacement)
+          .addClass(placement)
+      }
+
+      var calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight)
+
+      this.applyPlacement(calculatedOffset, placement)
+
+      var complete = function () {
+        var prevHoverState = that.hoverState
+        that.$element.trigger('shown.bs.' + that.type)
+        that.hoverState = null
+
+        if (prevHoverState == 'out') that.leave(that)
+      }
+
+      $.support.transition && this.$tip.hasClass('fade') ?
+        $tip
+          .one('bsTransitionEnd', complete)
+          .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
+        complete()
+    }
+  }
+
+  Tooltip.prototype.applyPlacement = function (offset, placement) {
+    var $tip   = this.tip()
+    var width  = $tip[0].offsetWidth
+    var height = $tip[0].offsetHeight
+
+    // manually read margins because getBoundingClientRect includes difference
+    var marginTop = parseInt($tip.css('margin-top'), 10)
+    var marginLeft = parseInt($tip.css('margin-left'), 10)
+
+    // we must check for NaN for ie 8/9
+    if (isNaN(marginTop))  marginTop  = 0
+    if (isNaN(marginLeft)) marginLeft = 0
+
+    offset.top  = offset.top  + marginTop
+    offset.left = offset.left + marginLeft
+
+    // $.fn.offset doesn't round pixel values
+    // so we use setOffset directly with our own function B-0
+    $.offset.setOffset($tip[0], $.extend({
+      using: function (props) {
+        $tip.css({
+          top: Math.round(props.top),
+          left: Math.round(props.left)
+        })
+      }
+    }, offset), 0)
+
+    $tip.addClass('in')
+
+    // check to see if placing tip in new offset caused the tip to resize itself
+    var actualWidth  = $tip[0].offsetWidth
+    var actualHeight = $tip[0].offsetHeight
+
+    if (placement == 'top' && actualHeight != height) {
+      offset.top = offset.top + height - actualHeight
+    }
+
+    var delta = this.getViewportAdjustedDelta(placement, offset, actualWidth, actualHeight)
+
+    if (delta.left) offset.left += delta.left
+    else offset.top += delta.top
+
+    var isVertical          = /top|bottom/.test(placement)
+    var arrowDelta          = isVertical ? delta.left * 2 - width + actualWidth : delta.top * 2 - height + actualHeight
+    var arrowOffsetPosition = isVertical ? 'offsetWidth' : 'offsetHeight'
+
+    $tip.offset(offset)
+    this.replaceArrow(arrowDelta, $tip[0][arrowOffsetPosition], isVertical)
+  }
+
+  Tooltip.prototype.replaceArrow = function (delta, dimension, isHorizontal) {
+    this.arrow()
+      .css(isHorizontal ? 'left' : 'top', 50 * (1 - delta / dimension) + '%')
+      .css(isHorizontal ? 'top' : 'left', '')
+  }
+
+  Tooltip.prototype.setContent = function () {
+    var $tip  = this.tip()
+    var title = this.getTitle()
+
+    $tip.find('.tooltip-inner')[this.options.html ? 'html' : 'text'](title)
+    $tip.removeClass('fade in top bottom left right')
+  }
+
+  Tooltip.prototype.hide = function (callback) {
+    var that = this
+    var $tip = this.tip()
+    var e    = $.Event('hide.bs.' + this.type)
+
+    function complete() {
+      if (that.hoverState != 'in') $tip.detach()
+      that.$element
+        .removeAttr('aria-describedby')
+        .trigger('hidden.bs.' + that.type)
+      callback && callback()
+    }
+
+    this.$element.trigger(e)
+
+    if (e.isDefaultPrevented()) return
+
+    $tip.removeClass('in')
+
+    $.support.transition && this.$tip.hasClass('fade') ?
+      $tip
+        .one('bsTransitionEnd', complete)
+        .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
+      complete()
+
+    this.hoverState = null
+
+    return this
+  }
+
+  Tooltip.prototype.fixTitle = function () {
+    var $e = this.$element
+    if ($e.attr('title') || typeof ($e.attr('data-original-title')) != 'string') {
+      $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
+    }
+  }
+
+  Tooltip.prototype.hasContent = function () {
+    return this.getTitle()
+  }
+
+  Tooltip.prototype.getPosition = function ($element) {
+    $element   = $element || this.$element
+
+    var el     = $element[0]
+    var isBody = el.tagName == 'BODY'
+
+    var elRect    = el.getBoundingClientRect()
+    if (elRect.width == null) {
+      // width and height are missing in IE8, so compute them manually; see https://github.com/twbs/bootstrap/issues/14093
+      elRect = $.extend({}, elRect, { width: elRect.right - elRect.left, height: elRect.bottom - elRect.top })
+    }
+    var elOffset  = isBody ? { top: 0, left: 0 } : $element.offset()
+    var scroll    = { scroll: isBody ? document.documentElement.scrollTop || document.body.scrollTop : $element.scrollTop() }
+    var outerDims = isBody ? { width: $(window).width(), height: $(window).height() } : null
+
+    return $.extend({}, elRect, scroll, outerDims, elOffset)
+  }
+
+  Tooltip.prototype.getCalculatedOffset = function (placement, pos, actualWidth, actualHeight) {
+    return placement == 'bottom' ? { top: pos.top + pos.height,   left: pos.left + pos.width / 2 - actualWidth / 2  } :
+           placement == 'top'    ? { top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2  } :
+           placement == 'left'   ? { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth } :
+        /* placement == 'right' */ { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width   }
+
+  }
+
+  Tooltip.prototype.getViewportAdjustedDelta = function (placement, pos, actualWidth, actualHeight) {
+    var delta = { top: 0, left: 0 }
+    if (!this.$viewport) return delta
+
+    var viewportPadding = this.options.viewport && this.options.viewport.padding || 0
+    var viewportDimensions = this.getPosition(this.$viewport)
+
+    if (/right|left/.test(placement)) {
+      var topEdgeOffset    = pos.top - viewportPadding - viewportDimensions.scroll
+      var bottomEdgeOffset = pos.top + viewportPadding - viewportDimensions.scroll + actualHeight
+      if (topEdgeOffset < viewportDimensions.top) { // top overflow
+        delta.top = viewportDimensions.top - topEdgeOffset
+      } else if (bottomEdgeOffset > viewportDimensions.top + viewportDimensions.height) { // bottom overflow
+        delta.top = viewportDimensions.top + viewportDimensions.height - bottomEdgeOffset
+      }
+    } else {
+      var leftEdgeOffset  = pos.left - viewportPadding
+      var rightEdgeOffset = pos.left + viewportPadding + actualWidth
+      if (leftEdgeOffset < viewportDimensions.left) { // left overflow
+        delta.left = viewportDimensions.left - leftEdgeOffset
+      } else if (rightEdgeOffset > viewportDimensions.width) { // right overflow
+        delta.left = viewportDimensions.left + viewportDimensions.width - rightEdgeOffset
+      }
+    }
+
+    return delta
+  }
+
+  Tooltip.prototype.getTitle = function () {
+    var title
+    var $e = this.$element
+    var o  = this.options
+
+    title = $e.attr('data-original-title')
+      || (typeof o.title == 'function' ? o.title.call($e[0]) :  o.title)
+
+    return title
+  }
+
+  Tooltip.prototype.getUID = function (prefix) {
+    do prefix += ~~(Math.random() * 1000000)
+    while (document.getElementById(prefix))
+    return prefix
+  }
+
+  Tooltip.prototype.tip = function () {
+    return (this.$tip = this.$tip || $(this.options.template))
+  }
+
+  Tooltip.prototype.arrow = function () {
+    return (this.$arrow = this.$arrow || this.tip().find('.tooltip-arrow'))
+  }
+
+  Tooltip.prototype.enable = function () {
+    this.enabled = true
+  }
+
+  Tooltip.prototype.disable = function () {
+    this.enabled = false
+  }
+
+  Tooltip.prototype.toggleEnabled = function () {
+    this.enabled = !this.enabled
+  }
+
+  Tooltip.prototype.toggle = function (e) {
+    var self = this
+    if (e) {
+      self = $(e.currentTarget).data('bs.' + this.type)
+      if (!self) {
+        self = new this.constructor(e.currentTarget, this.getDelegateOptions())
+        $(e.currentTarget).data('bs.' + this.type, self)
+      }
+    }
+
+    self.tip().hasClass('in') ? self.leave(self) : self.enter(self)
+  }
+
+  Tooltip.prototype.destroy = function () {
+    var that = this
+    clearTimeout(this.timeout)
+    this.hide(function () {
+      that.$element.off('.' + that.type).removeData('bs.' + that.type)
+    })
+  }
+
+
+  // TOOLTIP PLUGIN DEFINITION
+  // =========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this    = $(this)
+      var data     = $this.data('bs.tooltip')
+      var options  = typeof option == 'object' && option
+      var selector = options && options.selector
+
+      if (!data && option == 'destroy') return
+      if (selector) {
+        if (!data) $this.data('bs.tooltip', (data = {}))
+        if (!data[selector]) data[selector] = new Tooltip(this, options)
+      } else {
+        if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)))
+      }
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.tooltip
+
+  $.fn.tooltip             = Plugin
+  $.fn.tooltip.Constructor = Tooltip
+
+
+  // TOOLTIP NO CONFLICT
+  // ===================
+
+  $.fn.tooltip.noConflict = function () {
+    $.fn.tooltip = old
+    return this
+  }
+
+}(jQuery);
+
+/* ========================================================================
+ * Bootstrap: popover.js v3.3.1
+ * http://getbootstrap.com/javascript/#popovers
+ * ========================================================================
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  if(typeof $().popover == 'function')
+    return true;
+      
+  // POPOVER PUBLIC CLASS DEFINITION
+  // ===============================
+
+  var Popover = function (element, options) {
+    this.init('popover', element, options)
+  }
+
+  if (!$.fn.tooltip) throw new Error('Popover requires tooltip.js')
+
+  Popover.VERSION  = '3.3.1'
+
+  Popover.DEFAULTS = $.extend({}, $.fn.tooltip.Constructor.DEFAULTS, {
+    placement: 'right',
+    trigger: 'click',
+    content: '',
+    template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+  })
+
+
+  // NOTE: POPOVER EXTENDS tooltip.js
+  // ================================
+
+  Popover.prototype = $.extend({}, $.fn.tooltip.Constructor.prototype)
+
+  Popover.prototype.constructor = Popover
+
+  Popover.prototype.getDefaults = function () {
+    return Popover.DEFAULTS
+  }
+
+  Popover.prototype.setContent = function () {
+    var $tip    = this.tip()
+    var title   = this.getTitle()
+    var content = this.getContent()
+
+    $tip.find('.popover-title')[this.options.html ? 'html' : 'text'](title)
+    $tip.find('.popover-content').children().detach().end()[ // we use append for html objects to maintain js events
+      this.options.html ? (typeof content == 'string' ? 'html' : 'append') : 'text'
+    ](content)
+
+    $tip.removeClass('fade top bottom left right in')
+
+    // IE8 doesn't accept hiding via the `:empty` pseudo selector, we have to do
+    // this manually by checking the contents.
+    if (!$tip.find('.popover-title').html()) $tip.find('.popover-title').hide()
+  }
+
+  Popover.prototype.hasContent = function () {
+    return this.getTitle() || this.getContent()
+  }
+
+  Popover.prototype.getContent = function () {
+    var $e = this.$element
+    var o  = this.options
+
+    return $e.attr('data-content')
+      || (typeof o.content == 'function' ?
+            o.content.call($e[0]) :
+            o.content)
+  }
+
+  Popover.prototype.arrow = function () {
+    return (this.$arrow = this.$arrow || this.tip().find('.arrow'))
+  }
+
+  Popover.prototype.tip = function () {
+    if (!this.$tip) this.$tip = $(this.options.template)
+    return this.$tip
+  }
+
+
+  // POPOVER PLUGIN DEFINITION
+  // =========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this    = $(this)
+      var data     = $this.data('bs.popover')
+      var options  = typeof option == 'object' && option
+      var selector = options && options.selector
+
+      if (!data && option == 'destroy') return
+      if (selector) {
+        if (!data) $this.data('bs.popover', (data = {}))
+        if (!data[selector]) data[selector] = new Popover(this, options)
+      } else {
+        if (!data) $this.data('bs.popover', (data = new Popover(this, options)))
+      }
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.popover
+
+  $.fn.popover             = Plugin
+  $.fn.popover.Constructor = Popover
+
+
+  // POPOVER NO CONFLICT
+  // ===================
+
+  $.fn.popover.noConflict = function () {
+    $.fn.popover = old
+    return this
+  }
+
+}(jQuery);
+
 function chart_title(args) {
     //is chart title different than existing, if so, clear the fine 
     //gentleman, otherwise, move along
-    if(args.title && args.title !== $(args.target + ' h2.chart_title').text())
-        $(args.target + ' h2.chart_title').remove();
+    'use strict';
+    var currentTitle = $(args.target).find('h2.chart_title');
+    if(args.title && args.title !== currentTitle.text())
+        currentTitle.remove();
     else
         return;
 
     if (args.target && args.title) {
+        var newTitle;
         //only show question mark if there's a description
         var optional_question_mark = (args.description)
             ? '<i class="fa fa-question-circle fa-inverse"></i>'
@@ -189,15 +823,15 @@ function chart_title(args) {
             
         //activate the question mark if we have a description
         if (args.description){
-            var $elem = $(this);
-
-            $(args.target + ' h2.chart_title')
-                .popover({html: true,
-                    'animation': false,
-                    'content': args.description,
-                    'trigger': 'hover',
-                    'placement': 'top',
-                    'container': $(args.target + ' h2.chart_title')});
+            newTitle = $(args.target).find('h2.chart_title');
+                newTitle.popover({
+                    html: true,
+                    animation: false,
+                    content: args.description,
+                    trigger: 'hover',
+                    placement: 'top',
+                    container: newTitle
+                });
         }   
     }
     
@@ -205,9 +839,39 @@ function chart_title(args) {
         error(args);
     }
 }
+function y_rug(args) {
+    'use strict';
+    var svg = d3.select($(args.target).find('svg').get(0));
+    var buffer_size = args.chart_type == 'point' 
+        ? args.buffer / 2 
+        : args.buffer * 2 / 3;
+
+    var all_data = [];
+    for (var i=0; i<args.data.length; i++) {
+        for (var j=0; j<args.data[i].length; j++) {
+            all_data.push(args.data[i][j]);
+        }
+    }
+    var rug = svg.selectAll('line.y_rug').data(all_data)
+        .enter().append('svg:line')
+            .attr('x1', args.left + 1)
+            .attr('x2', args.left+buffer_size)
+            .attr('y1', args.scalefns.yf)
+            .attr('y2', args.scalefns.yf)
+            .attr('class', 'y-rug')
+            .attr('opacity', 0.3);
+
+    if (args.color_accessor) {
+        rug.attr('stroke', args.scalefns.color);
+    }
+    else {
+        rug.classed('y-rug-mono', true);
+    }
+}
 
 function y_axis(args) {
-    var svg = d3.select(args.target + ' svg');
+    var svg = d3.select($(args.target).find('svg').get(0));
+    var $svg = $($(args.target).find('svg').get(0));
     var g;
 
     var min_y, max_y;
@@ -219,7 +883,7 @@ function y_axis(args) {
     var min_y, max_y;
 
     var _set = false;
-    for (var i=0; i < args.data.length; i++) {
+    for (var i=0; i<args.data.length; i++) {
         var a = args.data[i];
 
         if (args.y_scale_type == 'log') {
@@ -245,18 +909,29 @@ function y_axis(args) {
         }
     }
 
+    // the default cause is for the y-axis to start at 0, unless we explicitly want it
+    // to start at ab arbitrary number or from the data's minimum value
+    if (min_y >= 0 && !args.min_y && !args.min_y_from_data){
+        min_y = 0;
+    }
+
+    //if a min_y or max_y have been set, use those instead
     min_y = args.min_y ? args.min_y : min_y;
     max_y = args.max_y ? args.max_y : max_y;
 
     if (args.y_scale_type != 'log') {
         // we are currently saying that if the min val > 0, set 0 as min y.
         if (min_y >= 0){
-            min_y = 0;
             args.y_axis_negative = false;
         } else {
             min_y = min_y  - (max_y * (args.inflator-1));
             args.y_axis_negative = true;
         }
+    }
+
+    max_y = max_y * args.inflator;
+    if (!args.min_y && args.min_y_from_data){
+        min_y = min_y / args.inflator;    
     }
 
     if (args.y_scale_type == 'log'){
@@ -269,20 +944,21 @@ function y_axis(args) {
                 min_y = 1;
             }
         }
+
         args.scales.Y = d3.scale.log()
-        .domain([min_y, max_y * args.inflator])
-        .range([args.height - args.bottom - args.buffer, args.top])
-        .clamp(true);
+            .domain([min_y, max_y])
+            .range([args.height - args.bottom - args.buffer, args.top])
+            .clamp(true);
     } else {
         args.scales.Y = d3.scale.linear()
-            .domain([min_y, max_y * args.inflator])
+            .domain([min_y, max_y])
             .range([args.height - args.bottom - args.buffer, args.top]);
     }
 
     // used for ticks and such, and designed to be paired with log or linear.
     args.scales.Y_axis = d3.scale.linear()
-            .domain([min_y, max_y * args.inflator])
-            .range([args.height - args.bottom - args.buffer, args.top]);
+        .domain([min_y, max_y])
+        .range([args.height - args.bottom - args.buffer, args.top]);
 
     var yax_format;
     if (args.format == 'count') {
@@ -304,10 +980,7 @@ function y_axis(args) {
     }
 
     //remove the old y-axis, add new one
-    if($(args.target + ' svg .y-axis').length > 0) {
-        $(args.target + ' svg .y-axis')
-            .remove();
-    }
+    $svg.find('.y-axis').remove();
 
     if (!args.y_axis) return this;
 
@@ -342,17 +1015,17 @@ function y_axis(args) {
 
     function log10(val) {
          //return Math.log(val) / Math.LN10;
-         if (val==1000){
+         if (val == 1000){
             return 3;
          }
-         if (val==1000000){
+         if (val == 1000000) {
             return 7;
          }
          return Math.log(val) / Math.LN10;
     }
 
-    if (args.y_scale_type == 'log'){
-        // get out only whole logs.
+    if (args.y_scale_type == 'log') {
+        // get out only whole logs
         scale_ticks = scale_ticks.filter(function(d){
             return Math.abs(log10(d)) % 1 < 1e-6 || Math.abs(log10(d)) % 1 > 1-1e-6;
         });
@@ -384,8 +1057,8 @@ function y_axis(args) {
         g.append('line')
             .attr('x1', args.left)
             .attr('x2', args.left)
-            .attr('y1', args.scales.Y(scale_ticks[0]))
-            .attr('y2', args.scales.Y(scale_ticks[last_i]));
+            .attr('y1', args.scales.Y(scale_ticks[0]).toFixed(2))
+            .attr('y2', args.scales.Y(scale_ticks[last_i]).toFixed(2));
     }
 
     //add y ticks
@@ -399,14 +1072,16 @@ function y_axis(args) {
                         ? args.width - args.right
                         : args.left - args.yax_tick_length;
                 })
-                .attr('y1', args.scales.Y)
-                .attr('y2', args.scales.Y);
+                .attr('y1', function(d) { return args.scales.Y(d).toFixed(2); })
+                .attr('y2', function(d) { return args.scales.Y(d).toFixed(2); });
 
     g.selectAll('.yax-labels')
         .data(scale_ticks).enter()
             .append('text')
                 .attr('x', args.left - args.yax_tick_length * 3 / 2)
-                .attr('dx', -3).attr('y', args.scales.Y)
+                .attr('dx', -3).attr('y', function(d) { 
+                    return args.scales.Y(d).toFixed(2);
+                })
                 .attr('dy', '.35em')
                 .attr('text-anchor', 'end')
                 .text(function(d, i) {
@@ -414,13 +1089,17 @@ function y_axis(args) {
                     return o;
                 })
 
+    if (args.y_rug) {
+        y_rug(args);
+    }
+
     return this;
 }
 
 function y_axis_categorical(args) {
     // first, come up with y_axis 
     var svg_height = args.height;
-    if (args.chart_type=='bar' && svg_height==null){
+    if (args.chart_type == 'bar' && svg_height == null){
         // we need to set a new height variable.
     }
 
@@ -432,29 +1111,67 @@ function y_axis_categorical(args) {
         return args.scales.Y(di[args.y_accessor]);
     }
 
-    var svg = d3.select(args.target + ' svg');
+    var svg = d3.select($(args.target).find('svg').get(0));
+    var $svg = $($(args.target).find('svg').get(0));
+
+    //remove the old y-axis, add new one
+    $svg.find('.y-axis').remove();
 
     var g = svg.append('g')
         .classed('y-axis', true)
         .classed('y-axis-small', args.use_small_class);
 
-
     if (!args.y_axis) return this;
 
     g.selectAll('text').data(args.categorical_variables).enter().append('svg:text')
         .attr('x', args.left)
-        .attr('y', function(d){return args.scales.Y(d) + args.scales.Y.rangeBand()/2 +(args.buffer)*args.outer_padding_percentage  })
+        .attr('y', function(d) {
+            return args.scales.Y(d) + args.scales.Y.rangeBand() / 2 
+                + (args.buffer)*args.outer_padding_percentage;
+        })
         .attr('dy', '.35em')
         .attr('text-anchor', 'end')
         .text(String)
-    // plot labels
-
 
     return this;
 }
 
+function x_rug(args) {
+    'use strict';
+    var buffer_size = args.chart_type =='point' 
+        ? args.buffer / 2 
+        : args.buffer;
+
+    var svg = d3.select($(args.target).find('svg').get(0));
+    var all_data=[];
+    for (var i=0; i<args.data.length; i++) {
+        for (var j=0; j<args.data[i].length; j++) {
+            all_data.push(args.data[i][j]);
+        }
+    }
+
+    var rug = svg.selectAll('line.x_rug').data(all_data)
+        .enter().append('svg:line')
+            .attr('x1', args.scalefns.xf)
+            .attr('x2', args.scalefns.xf)
+            .attr('y1', args.height-args.top+buffer_size)
+            .attr('y2', args.height-args.top)
+            .attr('class', 'x-rug')
+            .attr('opacity', 0.3);
+
+    if (args.color_accessor) {
+        rug.attr('stroke', args.scalefns.color);
+    }
+    else {
+        rug.classed('x-rug-mono', true);
+    }
+}
+
 function x_axis(args) {
-    var svg = d3.select(args.target + ' svg');
+    'use strict';
+    var svg = d3.select($(args.target).find('svg').get(0));
+    var $svg = $($(args.target).find('svg').get(0));
+
     var g;
     var min_x;
     var max_x;
@@ -466,24 +1183,35 @@ function x_axis(args) {
     if (args.chart_type == 'point') {
         // figure out 
         var min_size, max_size, min_color, max_color, size_range, color_range, size_domain, color_domain;
-        if (args.color_accessor != null){
-            if (args.color_domain == null){
-                if (args.color_type=='number'){
-                    min_color = d3.min(args.data[0], function(d){return d[args.color_accessor]});
-                    max_color = d3.max(args.data[0], function(d){return d[args.color_accessor]});        
+        if (args.color_accessor != null) {
+            if (args.color_domain == null) {
+                if (args.color_type=='number') {
+                    min_color = d3.min(args.data[0], function(d) {
+                        return d[args.color_accessor]
+                    });
+
+                    max_color = d3.max(args.data[0], function(d){
+                        return d[args.color_accessor]
+                    });
+
                     color_domain = [min_color, max_color];
-                } else if (args.color_type=='category'){
-                    color_domain = d3.set(args.data[0].map(function(d){
-                        return d[args.color_accessor];
-                    })).values();
+                }
+                else if (args.color_type == 'category') {
+                    color_domain = d3.set(args.data[0]
+                        .map(function(d) {
+                            return d[args.color_accessor];
+                        }))
+                        .values();
+
                     color_domain.sort();
                 }
-            } else {
+            }
+            else {
                 color_domain = args.color_domain;
             }
 
             if (args.color_range == null){
-                if (args.color_type=='number'){
+                if (args.color_type=='number') {
                     color_range = ['blue', 'red'];    
                 } else {
                     color_range = null;
@@ -492,41 +1220,52 @@ function x_axis(args) {
             } else {
                 color_range = args.color_range;
             }
-            
 
-            if (args.color_type=='number'){
-                args.scales.color = d3.scale.linear().domain(color_domain).range(color_range).clamp(true);    
+            if (args.color_type=='number') {
+                args.scales.color = d3.scale.linear()
+                    .domain(color_domain)
+                    .range(color_range)
+                    .clamp(true);    
             } else {
-                args.scales.color = args.color_range != null ? d3.scale.ordinal().range(color_range) : (color_domain.length > 10 ? d3.scale.category20() : d3.scale.category10() );
+                args.scales.color = args.color_range != null 
+                    ? d3.scale.ordinal().range(color_range) 
+                    : (color_domain.length > 10 
+                        ? d3.scale.category20() : d3.scale.category10());
+
                 args.scales.color.domain(color_domain);
-                
             }
 
-            
-
-            args.scalefns.color = function(di){
+            args.scalefns.color = function(di) {
                 return args.scales.color(di[args.color_accessor]);
             };
         }
 
         if (args.size_accessor != null) {
+            if (args.size_domain == null) {
+                min_size = d3.min(args.data[0], function(d){
+                    return d[args.size_accessor]
+                });
 
-            if (args.size_domain == null){
-                min_size = d3.min(args.data[0], function(d){return d[args.size_accessor]});
-                max_size = d3.max(args.data[0], function(d){return d[args.size_accessor]});
+                max_size = d3.max(args.data[0], function(d){
+                    return d[args.size_accessor];
+                });
+
                 size_domain = [min_size, max_size];
             } else {
                 size_domain = args.size_domain;
             }
-            if (args.size_range == null){
+            if (args.size_range == null) {
                 size_range = [1,5];//args.size_domain;
             } else {
                 size_range = args.size_range;
             }
-            
-            args.scales.size=d3.scale.linear().domain(size_domain).range(size_range).clamp(true);
 
-            args.scalefns.size = function(di){
+            args.scales.size=d3.scale.linear()
+                .domain(size_domain)
+                .range(size_range)
+                .clamp(true);
+
+            args.scalefns.size = function(di) {
                 return args.scales.size(di[args.size_accessor]);
             };
         }
@@ -583,7 +1322,8 @@ function x_axis(args) {
             }
 
             return Math.max.apply(null, trio);
-        }); //
+        });
+
         args.xax_format = function(f) {
             if (f < 1.0) {
                 //don't scale tiny values
@@ -599,6 +1339,7 @@ function x_axis(args) {
     min_x = args.min_x ? args.min_x : min_x;
     max_x = args.max_x ? args.max_x : max_x;
     args.x_axis_negative = false;
+
     if (!args.time_series) {
         if (min_x < 0){
             min_x = min_x  - (max_x * (args.inflator-1));
@@ -624,10 +1365,7 @@ function x_axis(args) {
         .range([args.left + args.buffer, args.width - args.right - args.buffer - additional_buffer]);
 
     //remove the old x-axis, add new one
-    if($(args.target + ' svg .x-axis').length > 0) {
-        $(args.target + ' svg .x-axis')
-            .remove();
-    }
+    $svg.find('.x-axis').remove();
 
     if (!args.x_axis) return this;
 
@@ -647,7 +1385,7 @@ function x_axis(args) {
                     + ((args.width - args.right - args.buffer)
                         - (args.left + args.buffer)) / 2;
             })
-            .attr('y', args.height - args.bottom / 2)
+            .attr('y', (args.height - args.bottom / 2).toFixed(2))
             .attr('dy', '.50em')
             .attr('text-anchor', 'middle')
             .text(function(d) {
@@ -661,12 +1399,12 @@ function x_axis(args) {
             .attr('x1', 
                 (args.concise == false || args.xax_count == 0)
                     ? args.left + args.buffer
-                    : args.scales.X(args.scales.X.ticks(args.xax_count)[0])
+                    : (args.scales.X(args.scales.X.ticks(args.xax_count)[0])).toFixed(2)
             )
             .attr('x2', 
                 (args.concise == false || args.xax_count == 0)
                     ? args.width - args.right - args.buffer
-                    : args.scales.X(args.scales.X.ticks(args.xax_count)[last_i])
+                    : (args.scales.X(args.scales.X.ticks(args.xax_count)[last_i])).toFixed(2)
             )
             .attr('y1', args.height - args.bottom)
             .attr('y2', args.height - args.bottom);
@@ -676,8 +1414,8 @@ function x_axis(args) {
     g.selectAll('.xax-ticks')
         .data(args.scales.X.ticks(args.xax_count)).enter()
             .append('line')
-                .attr('x1', args.scales.X)
-                .attr('x2', args.scales.X)
+                .attr('x1', function(d) { return args.scales.X(d).toFixed(2); })
+                .attr('x2', function(d) { return args.scales.X(d).toFixed(2); })
                 .attr('y1', args.height - args.bottom)
                 .attr('y2', function() {
                     return (args.x_extended_ticks)
@@ -692,8 +1430,8 @@ function x_axis(args) {
     g.selectAll('.xax-labels')
         .data(args.scales.X.ticks(args.xax_count)).enter()
             .append('text')
-                .attr('x', args.scales.X)
-                .attr('y', args.height - args.bottom + args.xax_tick_length * 7 / 3)
+                .attr('x', function(d) { return args.scales.X(d).toFixed(2); })
+                .attr('y', (args.height - args.bottom + args.xax_tick_length * 7 / 3).toFixed(2))
                 .attr('dy', '.50em')
                 .attr('text-anchor', 'middle')
                 .text(function(d) {
@@ -729,8 +1467,8 @@ function x_axis(args) {
         g.selectAll('.year_marker')
             .data(years).enter()
                 .append('line')
-                    .attr('x1', args.scales.X)
-                    .attr('x2', args.scales.X)
+                    .attr('x1', function(d) { return args.scales.X(d).toFixed(2); })
+                    .attr('x2', function(d) { return args.scales.X(d).toFixed(2); })
                     .attr('y1', args.top)
                     .attr('y2', args.height - args.bottom);
 
@@ -738,19 +1476,24 @@ function x_axis(args) {
         g.selectAll('.year_marker')
             .data(years).enter()
                 .append('text')
-                    .attr('x', args.scales.X)
-                    .attr('y', args.height - args.buffer + args.xax_tick_length)
+                    .attr('x', function(d) { return args.scales.X(d).toFixed(2); })
+                    .attr('y', (args.height - args.bottom + args.xax_tick_length * 7 / 1.3).toFixed(2))
                     .attr('dy', args.use_small_class ? -3 : 0)//(args.y_extended_ticks) ? 0 : 0 )
                     .attr('text-anchor', 'middle')
                     .text(function(d) {
                         return yformat(d);
                     });
-    };    
+    };  
+
+    if (args.x_rug){
+        x_rug(args);
+    }
 
     return this;
 }
 
 function init(args) {
+    'use strict';
     var defaults = {
         target: null,
         title: null,
@@ -781,16 +1524,19 @@ function init(args) {
         svg_height = args.height = args.data[0].length * args.bar_height + args.top + args.bottom;
     }
     //remove the svg if the chart type has changed
-    if(($(args.target + ' svg .main-line').length > 0 && args.chart_type != 'line')
-            || ($(args.target + ' svg .points').length > 0 && args.chart_type != 'point')
-            || ($(args.target + ' svg .histogram').length > 0 && args.chart_type != 'histogram')
+    var svg = $(args.target).find('svg');
+    if((svg.find('.main-line').length > 0 && args.chart_type != 'line')
+            || (svg.find('.points').length > 0 && args.chart_type != 'point')
+            || (svg.find('.histogram').length > 0 && args.chart_type != 'histogram')
+            || (svg.find('.barplot').length > 0 && args.chart_type != 'bar')
         ) {
         $(args.target).empty();
 
     }
 
     //add svg if it doesn't already exist
-    if($(args.target).is(':empty')) {
+    //using trim on html rather than :empty to ignore white spaces if they exist
+    if($.trim($(args.target).html()) == '') {
         //add svg
         d3.select(args.target)
             .append('svg')
@@ -818,19 +1564,19 @@ function init(args) {
 
     //draw axes
     args.use_small_class = args.height - args.top - args.bottom - args.buffer 
-            <= args.small_height_threshold && args.width - args.left-args.right - args.buffer*2 
+            <= args.small_height_threshold && args.width - args.left-args.right - args.buffer * 2 
             <= args.small_width_threshold || args.small_text;
 
     //if we're updating an existing chart and we have fewer lines than
     //before, remove the outdated lines, e.g. if we had 3 lines, and we're calling
     //data_graphic() on the same target with 2 lines, remove the 3rd line
-    if(args.data.length < $(args.target + ' svg .main-line').length) {
+    if(args.data.length < $(args.target).find('svg .main-line').length) {
         //now, the thing is we can't just remove, say, line3 if we have a custom
         //line-color map, instead, see which are the lines to be removed, and delete those    
         if(args.custom_line_color_map.length > 0) {
             var array_full_series = function(len) {
                 var arr = new Array(len);
-                for(var i=0;i<arr.length;i++) { arr[i] = i+1; }
+                for(var i=0;i<arr.length;i++) { arr[i] = i + 1; }
                 return arr;
             }
 
@@ -840,17 +1586,17 @@ function init(args) {
                 args.custom_line_color_map);
 
             for(var i=0; i<lines_to_remove.length; i++) {
-                $(args.target + ' svg .main-line.line' + lines_to_remove[i] + '-color')
+                $(args.target).find('svg .main-line.line' + lines_to_remove[i] + '-color')
                     .remove();
             }
         }
         //if we don't have a customer line-color map, just remove the lines from the end
         else {
             var num_of_new = args.data.length;
-            var num_of_existing = $(args.target + ' svg .main-line').length;
+            var num_of_existing = $(args.target).find('svg .main-line').length;
 
             for(var i=num_of_existing; i>num_of_new; i--) {
-                $(args.target + ' svg .main-line.line' + i + '-color').remove();
+                $(args.target).find('svg .main-line.line' + i + '-color').remove();
             }
         }
     }
@@ -859,15 +1605,13 @@ function init(args) {
 }
 
 function markers(args) {
-    var svg = d3.select(args.target + ' svg');
+    'use strict';
+    var svg = d3.select($(args.target).find('svg').get(0));
     var gm;
     var gb;
 
     if(args.markers) {
-        if($(args.target + ' svg .markers').length > 0) {
-            $(args.target + ' svg .markers')
-                .remove();
-        }
+        $(args.target).find('svg .markers').remove();
 
         gm = svg.append('g')
             .attr('class', 'markers');
@@ -880,10 +1624,10 @@ function markers(args) {
             .enter()
             .append('line')
                 .attr('x1', function(d) {
-                    return args.scales.X(d[args.x_accessor])
+                    return args.scales.X(d[args.x_accessor]).toFixed(2);
                 })
                 .attr('x2', function(d) {
-                    return args.scales.X(d[args.x_accessor])
+                    return args.scales.X(d[args.x_accessor]).toFixed(2);
                 })
                 .attr('y1', args.top)
                 .attr('y2', function() {
@@ -919,14 +1663,19 @@ function markers(args) {
                 .attr('x1', args.left + args.buffer)
                 .attr('x2', args.width-args.right-args.buffer)
                 .attr('y1', function(d){
-                    return args.scales.Y(d['value'])})
-                .attr('y2', function(d){return args.scales.Y(d['value'])});
+                    return args.scales.Y(d['value']).toFixed(2);
+                })
+                .attr('y2', function(d){
+                    return args.scales.Y(d['value']).toFixed(2);
+                });
 
         gb.selectAll('.baselines')
             .data(args.baselines)
             .enter().append('text')
                 .attr('x', args.width-args.right - args.buffer)
-                .attr('y', function(d){return args.scales.Y(d['value'])})
+                .attr('y', function(d){
+                    return args.scales.Y(d['value']).toFixed(2);
+                })
                 .attr('dy', -3)
                 .attr('text-anchor', 'end')
                 .text(function(d) {
@@ -937,7 +1686,193 @@ function markers(args) {
     return this;
 }
 
+/*!
+ * Bootstrap v3.3.1 (http://getbootstrap.com)
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+
+/*!
+ * Generated using the Bootstrap Customizer (http://getbootstrap.com/customize/?id=c3834cc5b59ef727da53)
+ * Config saved to config.json and https://gist.github.com/c3834cc5b59ef727da53
+ */
+if (typeof jQuery === 'undefined') {
+  throw new Error('Bootstrap\'s JavaScript requires jQuery')
+}
++function ($) {
+  var version = $.fn.jquery.split(' ')[0].split('.')
+  if ((version[0] < 2 && version[1] < 9) || (version[0] == 1 && version[1] == 9 && version[2] < 1)) {
+    throw new Error('Bootstrap\'s JavaScript requires jQuery version 1.9.1 or higher')
+  }
+}(jQuery);
+
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.1
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  if(typeof $().dropdown == 'function')
+    return true;
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.1'
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $('<div class="dropdown-backdrop"/>').insertAfter($(this)).on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger('shown.bs.dropdown', relatedTarget)
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if ((!isActive && e.which != 27) || (isActive && e.which == 27)) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.divider):visible a'
+    var $items = $parent.find('[role="menu"]' + desc + ', [role="listbox"]' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--                        // up
+    if (e.which == 40 && index < $items.length - 1) index++                        // down
+    if (!~index)                                      index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger('hidden.bs.dropdown', relatedTarget)
+    })
+  }
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '[role="menu"]', Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '[role="listbox"]', Dropdown.prototype.keydown)
+
+}(jQuery);
+
 var button_layout = function(target) {
+    'use strict';
     this.target = target;
     this.feature_set = {};
     this.public_name = {};
@@ -946,6 +1881,12 @@ var button_layout = function(target) {
     this.manual_map = {};
     this.manual_callback = {};
 
+    this._strip_punctuation = function(s){
+        var punctuationless = s.replace(/[^a-zA-Z0-9 _]+/g, '');
+        var finalString = punctuationless.replace(/ +?/g, "");
+        return finalString;
+    }
+
     this.data = function(data) {
         this._data = data;
         return this;
@@ -953,7 +1894,7 @@ var button_layout = function(target) {
 
     this.manual_button = function(feature, feature_set, callback) {
         this.feature_set[feature]=feature_set;
-        this.manual_map[strip_punctuation(feature)] = feature;
+        this.manual_map[this._strip_punctuation(feature)] = feature;
         this.manual_callback[feature]=callback;// the default is going to be the first feature.
         return this;
     }
@@ -985,7 +1926,7 @@ var button_layout = function(target) {
         var d,f, features, feat;
         features = Object.keys(this.feature_set);
         
-        // build out this.feature_set with this.data.
+        // build out this.feature_set with this.data
         for (var i=0; i < this._data.length; i++) {
             d = this._data[i];
             f = features.map(function(f) {return d[f]});
@@ -1008,7 +1949,7 @@ var button_layout = function(target) {
         for (var feature in this.feature_set) {
             features = this.feature_set[feature];
             $(this.target + ' div.segments').append(
-                    '<div class="btn-group '+strip_punctuation(feature)+'-btns text-left">' + // This never changes.
+                    '<div class="btn-group '+this._strip_punctuation(feature)+'-btns text-left">' + // This never changes.
                     '<button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown">' +
                         "<span class='which-button'>" + (this.public_name.hasOwnProperty(feature) ? this.public_name[feature] : feature) +"</span>" +
                         "<span class='title'>" + (this.manual_callback.hasOwnProperty(feature) ? this.feature_set[feature][0] : 'all') +  "</span>" + // if a manual button, don't default to all in label.
@@ -1022,18 +1963,18 @@ var button_layout = function(target) {
 
             for (var i=0;i<features.length;i++) {
                 if (features[i] != 'all' && features[i]!=undefined) { // strange bug with undefined being added to manual buttons.
-                    $(this.target + ' div.' + strip_punctuation(feature) + '-btns ul.dropdown-menu').append(
-                    '<li><a href="#" data-feature="' + strip_punctuation(feature) + '" data-key="' + features[i] + '">' 
+                    $(this.target + ' div.' + this._strip_punctuation(feature) + '-btns ul.dropdown-menu').append(
+                    '<li><a href="#" data-feature="' + this._strip_punctuation(feature) + '" data-key="' + features[i] + '">' 
                         + features[i] + '</a></li>'
                     ); 
                 }
             }
 
-            $('.' + strip_punctuation(feature) + '-btns .dropdown-menu li a').on('click', function() {
+            $('.' + this._strip_punctuation(feature) + '-btns .dropdown-menu li a').on('click', function() {
                 var k = $(this).data('key'); 
                 var feature = $(this).data('feature');
                 var manual_feature;
-                $('.' + strip_punctuation(feature) + '-btns button.btn span.title').html(k);
+                $('.' + this._strip_punctuation(feature) + '-btns button.btn span.title').html(k);
                 if (!manual_map.hasOwnProperty(feature)) {
                     callback(feature, k);    
                 } else {
@@ -1050,7 +1991,9 @@ var button_layout = function(target) {
 
     return this
 }
+
 charts.line = function(args) {
+    'use strict';
     this.args = args;
 
     this.init = function(args) {
@@ -1063,7 +2006,7 @@ charts.line = function(args) {
     }
 
     this.mainPlot = function() {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
         var g;
         var data_median = 0;
 
@@ -1106,7 +2049,7 @@ charts.line = function(args) {
         //for building the optional legend
         var legend = '';
         var this_data;
-            
+
         for(var i=args.data.length-1; i>=0; i--) {
             this_data = args.data[i];
 
@@ -1124,10 +2067,11 @@ charts.line = function(args) {
             }
 
             //add the area
-            if(args.area && !args.y_axis_negative && args.data.length <= 1) {
+            var $area = $(args.target).find('svg path.area' + (line_id) + '-color');
+            if(args.area && !args.use_data_y_min && !args.y_axis_negative && args.data.length <= 1) {
                 //if area already exists, transition it
-                if($(args.target + ' svg path.area' + (line_id) + '-color').length > 0) {
-                    d3.selectAll(args.target + ' svg path.area' + (line_id) + '-color')
+                if($area.length > 0) {
+                    d3.selectAll($(args.target).find('svg path.area' + (line_id) + '-color'))
                         .transition()
                             .duration(function() {
                                 return (args.transition_on_update) ? 1000 : 0;
@@ -1139,11 +2083,13 @@ charts.line = function(args) {
                         .attr('class', 'main-area ' + 'area' + (line_id) + '-color')
                         .attr('d', area(args.data[i]));
                 }
+            } else if ($area.length > 0) {
+              $area.remove();
             }
 
             //add the line, if it already exists, transition the fine gentleman
-            if($(args.target + ' svg path.line' + (line_id) + '-color').length > 0) {
-                d3.selectAll(args.target + ' svg path.line' + (line_id) + '-color')
+            if($(args.target).find('svg path.line' + (line_id) + '-color').length > 0) {
+                d3.selectAll($(args.target).find('svg path.line' + (line_id) + '-color'))
                     .transition()
                         .duration(function() {
                             return (args.transition_on_update) ? 1000 : 0;
@@ -1170,13 +2116,14 @@ charts.line = function(args) {
                         .attr('d', line(args.data[i]));
                 }
             }
-            
+
             //build legend
             if(args.legend) {
-                legend += "<span class='line" + (i+1)  + "-legend-color'>&mdash; " + args.legend[i] + "&nbsp; </span>";
+                legend = "<span class='line" + line_id  + "-legend-color'>&mdash; "
+                        + args.legend[i] + "&nbsp; </span>" + legend;
             }
         }
-        
+
         if(args.legend) {
             $(args.legend_target).html(legend);
         }
@@ -1190,24 +2137,17 @@ charts.line = function(args) {
     };
 
     this.rollover = function() {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
+        var $svg = $($(args.target).find('svg').get(0));
         var g;
 
         //remove the old rollovers if they already exist
-        if($(args.target + ' svg .transparent-rollover-rect').length > 0) {
-            $(args.target + ' svg .transparent-rollover-rect').remove();
-        }
-        if($(args.target + ' svg .voronoi').length > 0) {
-            $(args.target + ' svg .voronoi').remove();
-        }
-        
+        $svg.find('.transparent-rollover-rect').remove();
+        $svg.find('.voronoi').remove();
+
         //remove the old rollover text and circle if they already exist
-        if($(args.target + ' svg .active_datapoint').length > 0) {
-            $(args.target + ' svg .active_datapoint').remove();
-        }
-        if($(args.target + ' svg .line_rollover_circle').length > 0) {
-            $(args.target + ' svg .line_rollover_circle').remove();
-        }
+        $svg.find('.active_datapoint').remove();
+        $svg.find('.line_rollover_circle').remove();
 
         //rollover text
         svg.append('text')
@@ -1217,7 +2157,7 @@ charts.line = function(args) {
             .attr('x', args.width - args.right)
             .attr('y', args.top / 2)
             .attr('text-anchor', 'end');
-                
+
         //append circle
         svg.append('circle')
             .classed('line_rollover_circle', true)
@@ -1246,16 +2186,19 @@ charts.line = function(args) {
         if(args.data.length > 1) {
             //main rollover
             var voronoi = d3.geom.voronoi()
-                .x(function(d) { return args.scales.X(d[args.x_accessor]); })
-                .y(function(d) { return args.scales.Y(d[args.y_accessor]); })
+                .x(function(d) { return args.scales.X(d[args.x_accessor]).toFixed(2); })
+                .y(function(d) { return args.scales.Y(d[args.y_accessor]).toFixed(2); })
                 .clipExtent([[args.buffer, args.buffer], [args.width - args.buffer, args.height - args.buffer]]);
-        
+
             var g = svg.append('g')
                 .attr('class', 'voronoi')
 
             //we'll be using these when constructing the voronoi rollovers
             var data_nested = d3.nest()
-                .key(function(d) { return args.scales.X(d[args.x_accessor]) + "," + args.scales.Y(d[args.y_accessor]); })
+                .key(function(d) {
+                    return args.scales.X(d[args.x_accessor]) + ","
+                        + args.scales.Y(d[args.y_accessor]);
+                })
                 .rollup(function(v) { return v[0]; })
                 .entries(d3.merge(args.data.map(function(d) { return d; })))
                 .map(function(d) { return d.values; });
@@ -1271,8 +2214,13 @@ charts.line = function(args) {
                             if(args.linked) {
                                 var v = d[args.x_accessor];
                                 var formatter = d3.time.format('%Y-%m-%d');
-                                
-                                return 'line' + d['line_id'] + '-color ' + 'roll_' + formatter(v);
+
+                                //only format when x-axis is date
+                                var id = (typeof v === 'number')
+                                        ? i
+                                        : formatter(v);
+
+                                return 'line' + d['line_id'] + '-color ' + 'roll_' + id;
                             }
                             else {
                                 return 'line' + d['line_id'] + '-color';
@@ -1301,12 +2249,12 @@ charts.line = function(args) {
                             if(args.linked) {
                                 var v = d[args.x_accessor];
                                 var formatter = d3.time.format('%Y-%m-%d');
-                                
-                                //only format when y-axis is date
+
+                                //only format when x-axis is date
                                 var id = (typeof v === 'number')
                                         ? i
                                         : formatter(v);
-                                        
+
                                 return 'line' + line_id + '-color ' + 'roll_' + id;
                             }
                             else {
@@ -1315,9 +2263,9 @@ charts.line = function(args) {
                         })
                         .attr('x', function(d, i) {
                             if (i == 0) {
-                                return xf[i];
+                                return xf[i].toFixed(2);
                             } else {
-                                return (xf[i-1] + xf[i])/2;
+                                return ((xf[i-1] + xf[i])/2).toFixed(2);
                             }
                         })
                         .attr('y', function(d, i) {
@@ -1327,11 +2275,13 @@ charts.line = function(args) {
                         })
                         .attr('width', function(d, i) {
                             if (i == 0) {
-                                return (xf[i+1] - xf[i])/2;
-                            } else if (i == xf.length - 1) {
-                                return (xf[i] - xf[i-1])/2;
-                            } else {
-                                return (xf[i+1] - xf[i-1])/2;
+                                return ((xf[i+1] - xf[i]) / 2).toFixed(2);
+                            }
+                            else if (i == xf.length - 1) {
+                                return ((xf[i] - xf[i-1]) / 2).toFixed(2);
+                            }
+                            else {
+                                return ((xf[i+1] - xf[i-1]) / 2).toFixed(2);
                             }
                         })
                         .attr('height', function(d, i) {
@@ -1348,7 +2298,7 @@ charts.line = function(args) {
     }
 
     this.rolloverOn = function(args) {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
         var x_formatter = d3.time.format('%Y-%m-%d');
 
         return function(d, i) {
@@ -1358,14 +2308,14 @@ charts.line = function(args) {
                 .attr('class', 'area' + d['line_id'] + '-color')
                 .classed('line_rollover_circle', true)
                 .attr('cx', function() {
-                    return args.scales.X(d[args.x_accessor]);
+                    return args.scales.X(d[args.x_accessor]).toFixed(2);
                 })
                 .attr('cy', function() {
-                    return args.scales.Y(d[args.y_accessor]);
+                    return args.scales.Y(d[args.y_accessor]).toFixed(2);
                 })
                 .attr('r', args.point_size)
                 .style('opacity', 1);
-     
+
             //trigger mouseover on all rects for this date in .linked charts
             if(args.linked && !globals.link) {
                 globals.link = true;
@@ -1383,7 +2333,7 @@ charts.line = function(args) {
                     .each(function(d, i) {
                         d3.select(this).on('mouseover')(d,i);
                 })
-            }    
+            }
 
             svg.selectAll('text')
                 .filter(function(g, j) {
@@ -1417,15 +2367,15 @@ charts.line = function(args) {
                             var dd = new Date(+d[args.x_accessor]);
                             dd.setDate(dd.getDate());
 
-                            return fmt(dd) + '  ' + args.yax_units 
+                            return fmt(dd) + '  ' + args.yax_units
                                 + num(d[args.y_accessor]);
                         }
                         else {
-                            return args.x_accessor + ': ' + d[args.x_accessor] 
-                                + ', ' + args.y_accessor + ': ' + args.yax_units 
+                            return args.x_accessor + ': ' + d[args.x_accessor]
+                                + ', ' + args.y_accessor + ': ' + args.yax_units
                                 + num(d[args.y_accessor]);
                         }
-                    });                
+                    });
             }
 
             if(args.rollover_callback) {
@@ -1435,7 +2385,7 @@ charts.line = function(args) {
     }
 
     this.rolloverOff = function(args) {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
 
         return function(d, i) {
             if(args.linked && globals.link) {
@@ -1450,7 +2400,7 @@ charts.line = function(args) {
                         : formatter(v);
 
                 d3.selectAll('.roll_' + id)
-                    .each(function(d, i){
+                    .each(function(d, i) {
                         d3.select(this).on('mouseout')(d);
                 });
             }
@@ -1469,6 +2419,7 @@ charts.line = function(args) {
 }
 
 charts.histogram = function(args) {
+    'use strict';
     this.args = args;
 
     this.init = function(args) {
@@ -1481,14 +2432,13 @@ charts.histogram = function(args) {
     }
 
     this.mainPlot = function() {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
+        var $svg = $($(args.target).find('svg').get(0));
+
         var g;
 
         //remove the old histogram, add new one
-        if($(args.target + ' svg .histogram').length > 0) {
-            $(args.target + ' svg .histogram')
-                .remove();
-        }
+        $svg.find('.histogram').remove();
 
         var g = svg.append("g")
             .attr("class", "histogram");
@@ -1498,24 +2448,24 @@ charts.histogram = function(args) {
                 .enter().append("g")
                     .attr("class", "bar")
                     .attr("transform", function(d) {
-                        return "translate(" + args.scales.X(d[args.x_accessor]) 
-                            + "," + args.scales.Y(d[args.y_accessor]) + ")";
+                        return "translate(" + args.scales.X(d[args.x_accessor]).toFixed(2) 
+                            + "," + args.scales.Y(d[args.y_accessor]).toFixed(2) + ")";
                         });
 
         //draw bars
         bar.append("rect")
             .attr("x", 1)
             .attr("width", function(d, i) {
-                return args.scalefns.xf(args.data[0][1])
+                return (args.scalefns.xf(args.data[0][1])
                     - args.scalefns.xf(args.data[0][0])
-                    - args.bar_margin;
+                    - args.bar_margin).toFixed(2);
             })
             .attr("height", function(d) {
                 if(d[args.y_accessor] == 0)
                     return 0;
 
-                return args.height - args.bottom - args.buffer 
-                    - args.scales.Y(d[args.y_accessor]);
+                return (args.height - args.bottom - args.buffer 
+                    - args.scales.Y(d[args.y_accessor])).toFixed(2);
             });
 
         return this;
@@ -1527,16 +2477,13 @@ charts.histogram = function(args) {
     };
 
     this.rollover = function() {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
+        var $svg = $($(args.target).find('svg').get(0));
         var g;
         
         //remove the old rollovers if they already exist
-        if($(args.target + ' svg .transparent-rollover-rect').length > 0) {
-            $(args.target + ' svg .transparent-rollover-rect').remove();
-        }
-        if($(args.target + ' svg .active_datapoint').length > 0) {
-            $(args.target + ' svg .active_datapoint').remove();
-        }
+        $svg.find('.transparent-rollover-rect').remove();
+        $svg.find('.active_datapoint').remove();
 
         //rollover text
         svg.append('text')
@@ -1563,12 +2510,12 @@ charts.histogram = function(args) {
             .attr("y", 0)
             .attr("width", function(d, i) {
                 if (i != args.data[0].length - 1) {
-                    return args.scalefns.xf(args.data[0][i + 1]) 
-                        - args.scalefns.xf(d);
+                    return (args.scalefns.xf(args.data[0][i + 1]) 
+                        - args.scalefns.xf(d)).toFixed(2);
                 }
                 else {
-                    return args.scalefns.xf(args.data[0][1])
-                        - args.scalefns.xf(args.data[0][0]);
+                    return (args.scalefns.xf(args.data[0][1])
+                        - args.scalefns.xf(args.data[0][0])).toFixed(2);
                 }
             })
             .attr("height", function(d) {
@@ -1580,7 +2527,7 @@ charts.histogram = function(args) {
     }
 
     this.rolloverOn = function(args) {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
         var x_formatter = d3.time.format('%Y-%m-%d');
 
         return function(d, i) {
@@ -1609,7 +2556,7 @@ charts.histogram = function(args) {
             }
 
             //highlight active bar
-            d3.selectAll($(args.target + ' svg .bar :eq(' + i + ')'))
+            d3.selectAll($(args.target).find(' svg .bar :eq(' + i + ')'))
                 .classed('active', true);
 
             //update rollover text
@@ -1638,11 +2585,11 @@ charts.histogram = function(args) {
     }
 
     this.rolloverOff = function(args) {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
 
         return function(d, i) {
             //reset active bar
-            d3.selectAll($(args.target + ' svg .bar :eq(' + i + ')'))
+            d3.selectAll($(args.target).find('svg .bar :eq(' + i + ')'))
                 .classed('active', false);
             
             //reset active data point text
@@ -1656,6 +2603,7 @@ charts.histogram = function(args) {
 }
 
 charts.point = function(args) {
+    'use strict';
     this.args = args;
 
     this.init = function(args) {
@@ -1677,9 +2625,13 @@ charts.point = function(args) {
     }
 
     this.mainPlot = function() {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
+        var $svg = $($(args.target).find('svg').get(0));
         var g;
 
+        //remove the old points, add new one
+        $svg.find('.points').remove();
+        
         // plot the points, pretty straight-forward
         g = svg.append('g')
             .classed('points', true);
@@ -1707,55 +2659,19 @@ charts.point = function(args) {
             pts.attr('r', args.point_size);
         }
 
-        //are we adding rug plots?
-        var rug;
-        if (args.x_rug) {
-            rug = g.selectAll('line.x_rug').data(args.data[0])
-                .enter().append('svg:line')
-                    .attr('x1', args.scalefns.xf)
-                    .attr('x2', args.scalefns.xf)
-                    .attr('y1', args.height-args.top+args.buffer/2)
-                    .attr('y2', args.height-args.top)
-                    .attr('class', 'x-rug')
-                    .attr('opacity', 0.3);
-
-            if (args.color_accessor) {
-                rug.attr('stroke', args.scalefns.color);
-            }
-            else {
-                rug.classed('x-rug-mono', true);
-            }
-        }
-
-        if (args.y_rug) {
-            rug = g.selectAll('line.y_rug').data(args.data[0])
-                .enter().append('svg:line')
-                    .attr('x1', args.left+1)
-                    .attr('x2', args.left+args.buffer/2)
-                    .attr('y1', args.scalefns.yf)
-                    .attr('y2', args.scalefns.yf)
-                    .attr('class', 'y-rug')
-                    .attr('opacity', 0.3);
-
-            if (args.color_accessor) {
-                rug.attr('stroke', args.scalefns.color);
-            }
-            else {
-                rug.classed('y-rug-mono', true);
-            }
-        }
-
         return this;
     }
 
     this.rollover = function() {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
+        var $svg = $($(args.target).find('svg').get(0));
 
-        //remove rollover text if it already exists
-        if($(args.target + ' svg .active_datapoint').length > 0) {
-            $(args.target + ' svg .active_datapoint').remove();
-        }
-        
+        //remove the old rollovers if they already exist
+        $svg.find('.voronoi').remove();
+
+        //remove the old rollover text and circle if they already exist
+        $svg.find('.active_datapoint').remove();
+
         //add rollover text
         svg.append('text')
             .attr('class', 'active_datapoint')
@@ -1791,7 +2707,7 @@ charts.point = function(args) {
     }
 
     this.rolloverOn = function(args) {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
 
         return function(d, i) {
             svg.selectAll('.points circle')
@@ -1863,7 +2779,7 @@ charts.point = function(args) {
     }
 
     this.rolloverOff = function(args) {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
 
         return function(d,i) {
             if(args.linked && globals.link) {
@@ -1909,6 +2825,7 @@ charts.point = function(args) {
 // - need a way of changing the y axis and x axis
 // - need to sort out rollovers
 charts.bar = function(args) {
+    'use strict';
     this.args = args;
 
     this.init = function(args) {
@@ -1921,16 +2838,12 @@ charts.bar = function(args) {
     }
 
     this.mainPlot = function() {
-
-        var svg = d3.select(args.target + ' svg');
-
+        var svg = d3.select($(args.target).find('svg').get(0));
+        var $svg = $($(args.target).find('svg').get(0));
         var g;
 
-        //remove the old histogram, add new one
-        if($(args.target + ' svg .barplot').length > 0) {
-            $(args.target + ' svg .barplot')
-                .remove();
-        }
+        //remove the old barplot, add new one
+        $svg.find('.barplot').remove();
 
         var data = args.data[0];
 
@@ -1954,6 +2867,7 @@ charts.bar = function(args) {
             g.selectAll('.prediction')
                 .data(data)
                 .enter().append("rect")
+                    .attr('class', 'bar-prediction')
                     .attr('x', args.scales.X(0))
                     .attr('y', function(d){
                         return args.scalefns.yf(d) + pp0*appropriate_height/(pp*2) + appropriate_height/2;
@@ -1961,13 +2875,13 @@ charts.bar = function(args) {
                     .attr('height', appropriate_height/pp)
                     .attr('width', function(d){
                         return args.scales.X(d[args.predictor_accessor]) - args.scales.X(0);
-                    })
-                    .attr('fill', '#36454f');
+                    });
         }
         if (args.baseline_accessor){
             g.selectAll('.baseline')
                 .data(data)
                 .enter().append("line")
+                    .attr('class', 'bar-baseline')
                     .attr('x1', function(d){return args.scales.X(d[args.baseline_accessor])})
                     .attr('x2', function(d){return args.scales.X(d[args.baseline_accessor])})
                     .attr('y1', function(d){
@@ -1975,9 +2889,7 @@ charts.bar = function(args) {
                     })
                     .attr('y2', function(d){
                         return args.scalefns.yf(d)+appropriate_height/2+appropriate_height/pp + appropriate_height/2;
-                    })
-                    .attr('stroke-width', 2)
-                    .attr('stroke', '#36454f');
+                    });
         }
         return this;
     }
@@ -1988,16 +2900,13 @@ charts.bar = function(args) {
     };
 
     this.rollover = function() {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
+        var $svg = $($(args.target).find('svg').get(0));
         var g;
-        
+
         //remove the old rollovers if they already exist
-        if($(args.target + ' svg .transparent-rollover-rect').length > 0) {
-            $(args.target + ' svg .transparent-rollover-rect').remove();
-        }
-        if($(args.target + ' svg .active_datapoint').length > 0) {
-            $(args.target + ' svg .active_datapoint').remove();
-        }
+        $svg.find('.transparent-rollover-rect').remove();
+        $svg.find('.active_datapoint').remove();
 
         //rollover text
         svg.append('text')
@@ -2025,7 +2934,7 @@ charts.bar = function(args) {
     }
 
     this.rolloverOn = function(args) {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
         var x_formatter = d3.time.format('%Y-%m-%d');
 
         return function(d, i) {
@@ -2081,11 +2990,11 @@ charts.bar = function(args) {
     }
 
     this.rolloverOff = function(args) {
-        var svg = d3.select(args.target + ' svg');
+        var svg = d3.select($(args.target).find('svg').get(0));
 
         return function(d, i) {
             //reset active bar
-            d3.selectAll($(args.target + ' svg g.barplot .bar:eq(' + i + ')'))
+            d3.selectAll($(args.target).find('svg g.barplot .bar:eq(' + i + ')'))
                 .classed('active', false);
             
             //reset active data point text
@@ -2098,7 +3007,211 @@ charts.bar = function(args) {
     return this;
 }
 
+/*
+Data Tables
+
+Along with histograms, bars, lines, and scatters, a simple data table can take you far.
+We often just want to look at numbers, organized as a table, where columns are variables,
+and rows are data points. Sometimes we want a cell to have a small graphic as the main
+column element, in which case we want small multiples. sometimes we want to 
+
+var table = New data_table(data)
+				.target('div#data-table')
+				.title({accessor: 'point_name', align: 'left'})
+				.description({accessor: 'description'})
+				.number({accessor: ''})
+
+*/
+
+function data_table(args){
+	'use strict';
+	this.args = args;
+	this.args.standard_col = {width:150, font_size:12, font_weight:'normal'};
+	this.args.columns = [];
+	this.formatting_options = [['color', 'color'], ['font-weight', 'font_weight'], ['font-style', 'font_style'], ['font-size', 'font_size']];
+
+	this._strip_punctuation = function(s){
+        var punctuationless = s.replace(/[^a-zA-Z0-9 _]+/g, '');
+        var finalString = punctuationless.replace(/ +?/g, "");
+        return finalString;
+    }
+
+    this._format_element = function(element, value, args){
+    	this.formatting_options.forEach(function(fo){
+			var attr = fo[0];
+			var key = fo[1];
+			if (args[key]) element.style(attr, 
+				typeof args[key] == 'string' || 
+				typeof args[key] == 'number' ? 
+					args[key] : args[key](value));
+		});
+    }
+
+	this._add_column = function(_args, arg_type){
+		var standard_column = this.args.standard_col;
+		var args = merge_with_defaults(clone(_args), clone(standard_column));
+		args.type=arg_type;
+		this.args.columns.push(args);
+	}
+
+	this.target = function(){
+		var target = arguments[0];
+		this.args.target = target;
+		return this;
+	}
+
+	this.title = function(){
+		this._add_column(arguments[0], 'title');
+		return this;
+	}
+	this.text = function(){
+		this._add_column(arguments[0], 'text');
+		return this;
+	}
+	this.bullet = function(){
+		/*
+		text label 
+		main value
+		comparative measure
+		any number of ranges
+
+		additional args:
+		no title
+		xmin, xmax
+		format: percentage
+		xax_formatter
+		*/
+		return this;
+	}
+	this.sparkline = function(){
+
+		return this;
+	}
+	this.number = function(){
+		this._add_column(arguments[0], 'number');
+		return this;
+	}
+
+	this.display = function(){
+
+		var this_column;
+		var args = this.args;
+
+		chart_title(args);
+
+		var target = args.target;
+		var table = d3.select(target).append('table').classed('data-table', true);
+		var colgroup = table.append('colgroup');
+		var thead = table.append('thead');
+		var tbody = table.append('tbody');
+
+		var this_column, this_title;
+		var tr, th, td_accessor, td_type, td_value, th_text, td_text, td;
+		var col;
+
+		tr = thead.append('tr');
+
+		for (var h=0;h<args.columns.length;h++){
+			var this_col = args.columns[h];
+			td_type = this_col.type;
+			th_text=this_col.label;
+			th_text =th_text == undefined ? '' : th_text;
+			th = tr.append('th')
+				.style('width', this_col.width)
+				.style('text-align', td_type=='title' ? 'left' : 'right')
+				.text(th_text);
+			if (this_col.description){
+				th.append('i')
+					.classed('fa', true)
+					.classed('fa-question-circle', true)
+					.classed('fa-inverse', true);
+				$(th[0]).popover({
+                    html: true,
+                    animation: false,
+                    content: this_col.description,
+                    trigger: 'hover',
+                    placement: 'top',
+                    container: $(th[0])
+                 })
+			}
+		}
+
+		for (var h=0;h<args.columns.length;h++){
+			col = colgroup.append('col');
+			if (args.columns[h].type=='number'){
+				col.attr('align', 'char').attr('char', '.');
+			}
+		}
+
+		for (var i=0;i<args.data.length;i++){
+			tr = tbody.append('tr');
+			for (var j=0;j<args.columns.length;j++){
+				this_column = args.columns[j];
+				td_accessor = this_column.accessor;
+				td_value = td_text = args.data[i][td_accessor];
+				td_type     = this_column.type;
+
+				if (td_type=='number'){
+					//td_text may need to be rounded.
+					if (this_column.hasOwnProperty('round') && !this_column.hasOwnProperty('format')){
+						// round according to the number value in this_column.round.
+						//td_text = d3.round(td_text, this_column.round);
+						td_text = d3.format('0,.'+this_column.round+'f')(td_text);
+					}
+					if (this_column.hasOwnProperty('value_formatter')){
+						// provide a function that formats the text according to the function this_column.format.
+						td_text = this_column.value_formatter(td_text);
+
+					} if (this_column.hasOwnProperty('format')){
+						// this is a shorthand for percentage formatting, and others if need be.
+						// supported: 'percentage', 'count', 'temperature'
+						
+						if (this_column.round) td_text = d3.round(td_text, this_column.round);
+						var this_format = this_column.format;
+						var formatter;
+
+						if (this_format=='percentage')  formatter = d3.format('%p');
+						if (this_format=='count')       formatter = d3.format("0,000");
+						if (this_format=='temperature') formatter = function(t){return t +'º'};
+						
+						td_text = formatter(td_text);
+
+					} if (this_column.hasOwnProperty('currency')){
+						// this is another shorthand for formatting according to a currency amount, which gets appended to front of number.
+						td_text = this_column.currency + td_text;
+					}
+				}
+
+				td = tr.append('td')
+					.classed('table-' + td_type, true)
+					.classed('table-' + td_type + '-' + this._strip_punctuation(td_accessor), true)
+					.attr('data-value', td_value)
+					.style('width', this_column.width)
+					.style('text-align', td_type=='title' || td_type=='text' ? 'left' : 'right');
+
+				this._format_element(td, td_value, this_column);
+
+				if (td_type=='title'){
+					this_title = td.append('div').text(td_text);
+					this._format_element(this_title, td_text, this_column);
+					if (args.columns[j].hasOwnProperty('secondary_accessor')){
+						td.append('div')
+							.text(args.data[i][args.columns[j].secondary_accessor])
+							.classed("secondary-title", true)
+					}
+				} else {
+					td.text(td_text);
+				}
+			}
+		}
+
+		return this;
+	}
+
+	return this;
+}
 charts.missing = function(args) {
+    'use strict';
     this.args = args;
 
     this.init = function(args) {
@@ -2118,6 +3231,10 @@ charts.missing = function(args) {
         // add missing class
         svg.classed('missing', true);
 
+        // do we need to clear the legend?
+        if(args.legend_target)
+            $(args.legend_target).html('');
+
         svg.append('rect')
             .attr('class', 'missing-pane')
             .attr('x', args.left)
@@ -2125,17 +3242,15 @@ charts.missing = function(args) {
             .attr('width', args.width - (args.left * 2))
             .attr('height', args.height - (args.top * 2));
 
-        var missing_text = 'Data currently missing or unavailable';
-
         // add missing text
-        svg.selectAll('.missing_text').data([missing_text])
+        svg.selectAll('.missing_text').data([args.missing_text])
           .enter().append('text')
             .attr('class', 'missing-text')
             .attr('x', args.width / 2)
             .attr('y', args.height / 2)
             .attr('dy', '.50em')
             .attr('text-anchor', 'middle')
-            .text(missing_text)  
+            .text(args.missing_text)
 
         return this;
     }
@@ -2145,6 +3260,7 @@ charts.missing = function(args) {
 }
 
 function raw_data_transformation(args){
+    'use strict';
     //do we need to turn json data to 2d array?
 
     if(!$.isArray(args.data[0]))
@@ -2166,15 +3282,11 @@ function raw_data_transformation(args){
                 })
             })
         })[0];
-        // args.data = args.data.map(function(_d){
-        //     return _d.filter(function(di){
-        //         return di != undefined;
-        //     });
-        // })[0];
+
         args.y_accessor = 'multiline_y_accessor';
     }
 
-    //sort x-axis data.
+    //sort x-axis data
     if (args.chart_type == 'line'){
         for(var i=0; i<args.data.length; i++) {
             args.data[i].sort(function(a, b) {
@@ -2187,6 +3299,7 @@ function raw_data_transformation(args){
 }
 
 function process_line(args) {
+    'use strict';
     //are we replacing missing y values with zeros?
 
     //do we have a time-series?
@@ -2202,11 +3315,11 @@ function process_line(args) {
             var processed_data = [];
 
             //we'll be starting from the day after our first date
-            var start_date = clone(first['date']).setDate(first['date'].getDate() + 1);
+            var start_date = clone(first[args.x_accessor]).setDate(first[args.x_accessor].getDate() + 1);
 
             //if we've set a max_x, add data points up to there
             var from = (args.min_x) ? args.min_x : start_date;
-            var upto = (args.max_x) ? args.max_x : last['date'];
+            var upto = (args.max_x) ? args.max_x : last[args.x_accessor];
             for (var d = new Date(from); d <= upto; d.setDate(d.getDate() + 1)) {
                 var o = {};
                 d.setHours(0, 0, 0, 0);
@@ -2229,7 +3342,7 @@ function process_line(args) {
 
                 //if we don't have this date in our data object, add it and set it to zero
                 if(!existing_o) {            
-                    o['date'] = new Date(d);
+                    o[args.x_accessor] = new Date(d);
                     o[args.y_accessor] = 0;
                     processed_data.push(o);
                 }
@@ -2239,7 +3352,7 @@ function process_line(args) {
                 }
                 
                 //add the last data item
-                if(Date.parse(d) == Date.parse(new Date(last['date']))) {
+                if(Date.parse(d) == Date.parse(new Date(last[args.x_accessor]))) {
                     processed_data.push(last);
                 }
             }
@@ -2253,6 +3366,7 @@ function process_line(args) {
 }
 
 function process_histogram(args){
+    'use strict';
     // if args.binned=False, then we need to bin the data appropriately.
     // if args.binned=True, then we need to make sure to compute the relevant computed data.
     // the outcome of either of these should be something in args.computed_data.
@@ -2320,7 +3434,7 @@ function process_histogram(args){
 
 function process_categorical_variables(args){
     // For use with bar charts, etc.
-
+    'use strict';
     var extracted_data, processed_data={}, pd=[];
     var our_data = args.data[0];
     args.categorical_variables = [];
@@ -2362,7 +3476,7 @@ function process_categorical_variables(args){
 }
 
 function process_point(args){
-
+    'use strict';
     var data = args.data[0];
     var x = data.map(function(d){return d[args.x_accessor]});
     var y = data.map(function(d){return d[args.y_accessor]});
@@ -2376,7 +3490,7 @@ function process_point(args){
 }
 
 function add_ls(args){
-    var svg = d3.select(args.target + ' svg');
+    var svg = d3.select($(args.target).find('svg').get(0));
     var data = args.data[0];
     //var min_x = d3.min(data, function(d){return d[args.x_accessor]});
     //var max_x = d3.max(data, function(d){return d[args.x_accessor]});
@@ -2392,7 +3506,7 @@ function add_ls(args){
 }
 
 function add_lowess(args){
-    var svg = d3.select(args.target + ' svg');
+    var svg = d3.select($(args.target).find('svg').get(0));
     var lowess = args.lowess_line;
 
     var line = d3.svg.line()
@@ -2650,9 +3764,10 @@ function modify_time_period(data, past_n_days) {
     return data_spliced;
 }
 
-function convert_dates(data, x_accessor) {
+function convert_dates(data, x_accessor, time_format) {
+    time_format = (typeof time_format === "undefined") ? '%Y-%m-%d' : time_format;
     data = data.map(function(d) {
-        var fff = d3.time.format('%Y-%m-%d');
+        var fff = d3.time.format(time_format);
         d[x_accessor] = fff.parse(d[x_accessor]);
         return d;
     });
@@ -2763,6 +3878,6 @@ function error(args) {
     var error = '<i class="fa fa-x fa-exclamation-circle warning"></i>';
     console.log('ERROR : ', args.target, ' : ', args.error);
     
-    $(args.target + ' .chart_title').append(error);
+    $(args.target).find('.chart_title').append(error);
 }
 
