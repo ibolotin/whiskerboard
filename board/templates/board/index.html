@@ -12,7 +12,7 @@
         <thead>
             <tr>
                 <th>Service</th>
-                <th>State</th>
+                <th><span>State</span></th>
             </tr>
         </thead>
         <tbody id="services-body">
@@ -21,12 +21,12 @@
             <td>{{ service.name }}</td>
             {% with service.events.latest.status as latest_status %}
             {% if latest_status %}
-            <td class="status bg-danger">
-                {{ latest_status.description }}
+            <td class="status">
+                <span class="bg-danger">{{ latest_status.description }}</span>
             </td>
             {% else %}
             <td class="status">
-                {{ default.description }}
+                <span>{{ default.description }}</span>
             </td>
             {% endif %}
             {% endwith %}
@@ -36,24 +36,32 @@
     </table>
     {% endfor %}
 </div>
-<br>
+
+{% block bugzilla %}
+<div id="contact-block">
+    <a href="/contact" target="_blank">
+        <button class="btn btn-primary btn-lg">Have a problem? Report it</button>
+    </a>
+</div>
+{% endblock %}
+
 <div id='event-log'>
     <h2>Recent Events</h2>
     {% for day, incidents in dates.items %}
-    {% if incidents|length == 0 %}
-    <div class="null event">{{ day|date:"M j, Y" }}: No incidents reported.</div>
-    {% else %}
+    {% if incidents|length > 0 %}
+    <div class="event-date">
+    <span class="date small">{{ day|date:"M j, Y" }}</span>
     {% for incident in incidents %}
-    <div class="danger event">
-        {{ day|date:"M j, Y" }}:
-            <h6>{{ incident.name }}</h6>
-            <a href="/incidents/{{ incident.slug }}"><h3>Services: {{ incident.services }}</h3></a>
-            {% for item_event in incident.events.all %}
-                <p>{{ item_event.message|safe }}</p>
-                <p>{{ item_event.start|date:"M j, H:i T" }}</p>
-            {% endfor %}
+    <div class="event">
+        <span class="small">{{ incident.name }}</span>
+        <h3>{{ incident.services }}</h3>
+        {% for item_event in incident.events.all %}
+            <p class="event-desc">{{ item_event.message|safe }}</p>
+            <p class="small text-right">Timestamp: {{ item_event.start|date:"M j, H:i T" }}</span>
+        {% endfor %}
     </div>
     {% endfor %}
+    </div>
     {% endif %}
     {% endfor %}
 </div>

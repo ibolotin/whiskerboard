@@ -2,6 +2,14 @@ html,
 body {
   font-family: 'Fira Sans', sans-serif;
 }
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.site-content {
+  flex: 1;
+}
 h1,
 h2,
 h3,
@@ -14,62 +22,77 @@ h6 {
   padding: 10px 0;
 }
 .jumbotron a {
-  text-decoration: none;
   color: #424f5a;
+  text-decoration: none;
 }
 #services-table {
-  background: #fff;
+  background: white;
   border: 1px solid #c1c1c1;
 }
 #services-table td,
 #services-table th {
+  border-bottom: 1px dotted #c1c1c1;
+  border: none;
   font-size: 18px;
-  padding: 10px !important;
-  border: 1px solid #c1c1c1;
+  padding: 10px;
+  vertical-align: middle;
+}
+#services-table td span,
+#services-table th span {
+  border-radius: 16px;
+  display: block;
+  padding: 12px;
+}
+#services-table td {
+  border-radius: 10px;
+  padding: 15px;
+}
+#contact-block {
+  margin: 50px 0;
+}
+#contact-block a {
+  display: block;
+  margin: 0 auto;
+}
+#contact-block button {
+  display: block;
+  margin: 0 auto;
+  text-decoration: none;
+  transition: all 250ms;
+  width: 100%;
 }
 #event-log h2 {
-  padding: 20px;
-  background: white;
+  font-size: 48px;
+  margin-bottom: 30px;
+}
+#event-log .event-date {
+  margin: 0 0 20px 0;
+}
+#event-log .event-date .date {
   border: 1px solid #c1c1c1;
-  margin: 0;
+  margin-left: 0px;
+  padding: 5px;
 }
 #event-log .event {
-  margin-left: 20px;
-  padding: 20px;
-  border-left: 1px solid #c1c1c1;
-  position: relative;
+  background: white;
+  border-bottom: 1px solid #c1c1c1;
+  border-radius: 2px;
+  margin: 10px 0;
+  padding: 10px;
 }
-#event-log .event:before {
-  content: '';
-  display: block;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  position: absolute;
-  left: -8px;
-  top: 22px !important;
-}
-#event-log .event.null:before {
-  background: #c1c1c1;
-  border: 1px solid #424f5a;
-}
-#event-log .event.danger {
-  border: 1px solid #c1c1c1;
-  background: #fff;
-  padding: 20px;
-}
-#event-log .event.danger h3,
-#event-log .event.danger h6,
-#event-log .event.danger p {
+#event-log h3 {
   font-weight: 300;
-  margin: 10px;
+  margin: 10px 0;
 }
-#event-log .event.danger:before {
-  background: #d74345;
+#event-log p {
+  margin: 0;
+}
+#event-log .event-desc {
+  max-width: 60%;
 }
 .service-status {
+  color: white;
   padding: 20px;
-  color: #fff;
 }
 .service-status h3,
 .service-status p {
@@ -82,16 +105,24 @@ h6 {
   background: #d74345;
 }
 .white-box {
-  background: #fff;
+  background: white;
   padding: 20px;
 }
 .metric {
   margin: 0 auto;
 }
 #metrics-area {
+  background: white;
   margin: 50px 0;
   padding: 20px 0;
-  background: #fff;
+}
+#bug-submission {
+  background: white;
+  border: 1px solid #c1c1c1;
+  padding: 20px;
+}
+#bug-submission label {
+  display: block;
 }
 .footer {
   margin: 50px 0 0 0;

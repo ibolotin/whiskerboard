@@ -17,6 +17,10 @@ module.exports = function(grunt) {
       bootstrapVars: {
         src: 'application_styles/variables.less',
         dest: 'bower_components/bootstrap/less/variables.less'
+      },
+      bootstrapJS: {
+        src: 'bower_components/bootstrap/dist/js/bootstrap.min.js',
+        dest: 'board/static/js/libs/bootstrap.min.js'
       }
     },
     autoprefixer: {
@@ -32,6 +36,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-autoprefixer');
 
-  grunt.registerTask('css',['copy','less','autoprefixer']);
+  grunt.registerTask('default',['copy','less','autoprefixer']);
 
 };
