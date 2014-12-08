@@ -36,7 +36,7 @@ To modify CSS, begin by installing npm and bower dependencies from the `whiskerb
     npm install
     bower install
 
-The only files that should be maipluated are `application_styles/main.less` and `applicaition_styles/variables.less`. 
+The only files that should be manipulated are `application_styles/main.less` and `application_styles/variables.less`. 
 
 To compile changes to LESS, use the `grunt` command.
 
@@ -47,4 +47,3 @@ API Documentation
 Visit the [wiki](http://github.com/sijis/whiskerboard/wiki) page on details about the API.
 
 You may also find useful the [whiskerboard-tools](http://github.com/sijis/whiskerboard-tools) repository.
-
