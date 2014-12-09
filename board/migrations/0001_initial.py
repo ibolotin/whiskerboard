@@ -100,6 +100,7 @@ class Migration(migrations.Migration):
                     auto_created=True,
                     primary_key=True)),
                 ('name', models.CharField(max_length=100)),
+                ('css', models.CharField(max_length=100)),
                 ('slug', models.SlugField()),
                 ('description', models.CharField(max_length=255)),
                 ('severity', models.IntegerField(

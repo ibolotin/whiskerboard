@@ -6,3 +6,5 @@ static_root/
 whiskerboard.sqlite3
 *venv*
 *settings_local*
+bower_components/
+node_modules/

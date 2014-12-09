@@ -27,14 +27,13 @@
 <div id="webservices">
     <h2>{{ service.name }}</h2>
     <p id="service-desc">{{ service.description|safe }}</p>
-
     {% if no_incidents %}
         <div class="service-status null">
             <h3>The service is up</h3>
             <span class="text-right">updated X minutes ago</span>
         </div>
     {% else %}
-        <div class="service-status down">
+        <div class="service-status {{ service.events.latest.status.slug }}">
             <h3>{{ service.events.latest.status.description }}</h3>
             <span class="text-right">updated X minutes ago</span>
         </div>
@@ -96,7 +95,7 @@
     {% for item_event in incident.events.all %}
     <div class="updates-container">
         <div class="update font-regular completed">
-            <strong><font color="{{ item_event.status.color }}">{{ item_event.status.name }}</font></strong> -  {{ item_event.message|safe }}
+            <strong>{{ item_event.status.name }}</strong> -  {{ item_event.message|safe }}
             <br>
             <small>
                 {{ item_event.start|date:"M j, H:i T" }}
