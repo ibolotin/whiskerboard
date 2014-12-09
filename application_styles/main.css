@@ -98,11 +98,14 @@ h6 {
 .service-status p {
   margin: 5px 0;
 }
-.service-status.null {
+.service-status.up {
   background: #74bf43;
 }
 .service-status.down {
   background: #d74345;
+}
+.service-status.warning {
+  background: #ff9500;
 }
 .white-box {
   background: white;

@@ -126,6 +126,7 @@ class Status(models.Model):
     A possible system status.
     """
     name = models.CharField(max_length=100)
+    css = models.CharField(max_length=100)
     slug = models.SlugField()
     description = models.CharField(max_length=255)
     SEVERITY_CHOICES = (

@@ -22,11 +22,11 @@
             {% with service.events.latest.status as latest_status %}
             {% if latest_status %}
             <td class="status">
-                <span class="bg-danger">{{ latest_status.description }}</span>
+                <span class="bg-{{ latest_status.css }}">{{ latest_status.description }}</span>
             </td>
             {% else %}
             <td class="status">
-                <span>{{ default.description }}</span>
+                <span class="bg-{{ default.css }}">{{ default.description }}</span>
             </td>
             {% endif %}
             {% endwith %}
