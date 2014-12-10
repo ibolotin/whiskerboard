@@ -2,7 +2,7 @@ html,
 body {
   font-family: 'Fira Sans', sans-serif;
 }
-body {
+.flex-container {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -12,7 +12,7 @@ body {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
 }
 .site-content {
   -webkit-box-flex: 1;
@@ -37,7 +37,10 @@ h6 {
 }
 #services-table {
   background: white;
-  border: 1px solid #c1c1c1;
+  border-bottom: 1px solid #c1c1c1;
+  border-radius: 2px;
+  margin: 10px 0;
+  padding: 10px;
 }
 #services-table td,
 #services-table th {
@@ -132,8 +135,11 @@ h6 {
 }
 #bug-submission {
   background: white;
-  border: 1px solid #c1c1c1;
-  padding: 20px;
+  border-bottom: 1px solid #c1c1c1;
+  border-radius: 2px;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 16px;
 }
 #bug-submission label {
   display: block;
