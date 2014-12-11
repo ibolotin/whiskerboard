@@ -3,6 +3,7 @@
 {% block content %}
 <h2>Have a problem?</h2>
 <p>Please fill out the following form with a detailed description of the problem and we will look into it.</p>
+<strong><p>The information submitted via the form will be publicly visible. Please do not include any private or personal information.</p></strong>
 <form id="bug-submission" action='/contact' method='post'>{% csrf_token %}
     {{ form.as_p }}
     <input type='submit' value='Submit' class="btn btn-primary" />
