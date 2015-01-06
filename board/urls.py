@@ -28,6 +28,4 @@ urlpatterns = patterns('',
                        url(r'^feed$', EventFeed(), name='feed'),
                        url(r'^api/', include(v1_api.urls)),
                        url(r'^admin/', include(admin.site.urls)),
-                       url(r'^contact$',
-                           ContactBugzillaView.as_view(), name='contact'),
                        )
