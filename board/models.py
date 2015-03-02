@@ -87,8 +87,8 @@ class Service(models.Model):
             if event.status.severity > severity:
                 issue_date = '%s-%s' % (event.start.month, event.start.day)
                 if issue_date in stats.keys():
-                    stats[issue_date]["image"] = "information"
-                    stats[issue_date]["information"] = True
+                    stats[issue_date]["image"] = event.status.image
+#                    stats[issue_date]["information"] = True
 
         results = []
 

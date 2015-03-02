@@ -11,7 +11,7 @@ ROOT_URLCONF = 'board.urls'
 SITE_ID = 1
 
 # Missing by Default. Add your own unique key.
-SECRET_KEY = "zr=$!5*e#&%9ufb%7a9ztjr@2pu^w$&o+3!nhm*_9x_=4*wx0t"
+SECRET_KEY = ";wouvjsmle,mvu8shdnflgklrhofdgw;eodivuqok@$TWVE#$5gvw45^@VR@B"
 
 ######################################
 # Apps
@@ -47,14 +47,24 @@ MIDDLEWARE_CLASSES = (
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'whiskerboard.sqlite3',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-    }
-}
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'whisker',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'USER': 'whisker',
+        'PASSWORD': 'board',
+        }}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'whiskerboard.sqlite3',
+#         'USER': '',
+#         'PASSWORD': '',
+#         'HOST': '',
+#         'PORT': '',
+#     }
+# }
 
 ######################################
 # Localisation

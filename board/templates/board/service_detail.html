@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% load waffle_tags %}
 {% block page_title_prefix %}{{ service.name }} — {% endblock %}
-{% block page_title_suffix %} — Mozilla{% endblock %}
+{% block page_title_suffix %} — CloudFire{% endblock %}
 
 {% block css %}
 {{ block.super }}
@@ -17,25 +17,23 @@
 <script src="{% static 'js/metrics-graphics/main.js' %}"></script>
 {% endblock %}
 
-{% block breadcrumbs %}
-<header class="jumbotron">
-    <h1>{{ current_site.name }}</h1>
-</header>
-{% endblock %}
-
 {% block content %}
 <div id="webservices">
     <h2>{{ service.name }}</h2>
     <p id="service-desc">{{ service.description|safe }}</p>
     {% if no_incidents %}
-        <div class="service-status null">
-            <h3>The service is up</h3>
-            <span class="text-right">updated X minutes ago</span>
+        <div class="service-status up">
+            <h3>Service is operating normally</h3>
+            <!--<span class="text-right">updated X minutes ago</span> -->
+            <span class="text-right">No known issues at this time</span>
         </div>
     {% else %}
         <div class="service-status {{ service.events.latest.status.slug }}">
             <h3>{{ service.events.latest.status.description }}</h3>
-            <span class="text-right">updated X minutes ago</span>
+            <!--<span class="text-right">updated X minutes ago</span>-->
+            {% if service.events.latest.status.slug == 'up' %}
+                <span class="text-right">No known issues at this time</span>
+            {% endif %}
         </div>
     {% endif %}
 </div>
@@ -45,7 +43,7 @@
     {{ start_date|date:"n/j/Y" }}
 {% endif %}
 </h3>
-
+<!--
 <div id="metrics-area">
     <div class="row">
         <div class="col-4">
@@ -74,9 +72,10 @@
     {% endflag %}
     </div>
 </div>
+-->
 
 <div id="recent-events">
-    <h2>Recent Events</h2>
+    <h2>Past incidents</h2>
     {% if no_incidents %}
     {{ no_incidents }}
     {% endif %}

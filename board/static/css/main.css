@@ -45,7 +45,6 @@ h6 {
 #services-table td,
 #services-table th {
   border-bottom: 1px dotted #c1c1c1;
-  border: none;
   font-size: 18px;
   padding: 10px;
   vertical-align: middle;
@@ -56,9 +55,13 @@ h6 {
   display: block;
   padding: 12px;
 }
+
 #services-table td {
   border-radius: 10px;
-  padding: 15px;
+  padding: 3px;
+}
+#services-table .status {
+  text-align: center;
 }
 #contact-block {
   margin: 50px 0;

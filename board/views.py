@@ -31,6 +31,15 @@ def get_dates(days=7):
 
     return dates
 
+def get_past_days(num):
+    date = datetime.date.today()
+    dates = []
+
+    for i in range(1, num + 1):
+        dates.append(date - datetime.timedelta(days=i))
+
+    return dates
+
 
 class IndexView(BoardMixin, ListView):
     context_object_name = 'services'
@@ -41,7 +50,9 @@ class IndexView(BoardMixin, ListView):
         start_date = get_start_date(14)
         context = super(IndexView, self).get_context_data(**kwargs)
         context['default'] = Status.objects.default()
-        # sqlite doesn't support DISTINCT ON
+        context['past'] = get_past_days(5)
+
+    # sqlite doesn't support DISTINCT ON
         # incidents = Incident.objects.filter(
         #     events__start__gte=start_date).distinct('name').order_by('-events')
         # It would probably be easier to denormalize incident start time
@@ -82,7 +93,7 @@ class ServiceView(BoardMixin, DetailView):
     model = Service
     template_name = 'board/service_detail.html'
 
-    def get(self, request, slug=None, days=30):
+    def get(self, request, slug=None, days=30, year=None, month=None, day=None):
         start_date = get_start_date(days)
         data = get_object_or_404(self.model, slug=slug)
 

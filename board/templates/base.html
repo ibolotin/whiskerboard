@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block extra_meta %}{% endblock %}
 
-    <title>{% block page_title_prefix %}Mozilla — {% endblock %}{% block page_title %}{{ current_site.name }}{% endblock %}{% block page_title_suffix %}{% endblock %}</title>
+    <title>{% block page_title_prefix %}CloudFire — {% endblock %}{% block page_title %}{{ current_site.name }}{% endblock %}{% block page_title_suffix %}{% endblock %}</title>
 
     {% block favicon %}<link rel="shortcut icon" href="{% static 'media/img/favicon.ico' %}" />{% endblock %}
     <link rel="alternate" type="application/rss+xml" title="Latest status updates." href="{% url 'feed' %}">
@@ -19,7 +19,7 @@
         {% block css %}
         <link rel="stylesheet" href="//code.cdn.mozilla.net/fonts/fira.css">
         <link rel="stylesheet" type="text/css" href="{% static 'css/lib/bootstrap.css' %}" media="screen" />
-        <link rel="stylesheet" type="text/css" href="//www.mozilla.org/tabzilla/media/css/tabzilla.css" media="screen" />
+<!--        <link rel="stylesheet" type="text/css" href="//www.mozilla.org/tabzilla/media/css/tabzilla.css" media="screen" /> -->
         <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" media="screen" />
         {% endblock %}
         {% block site_css %}{% endblock %}
@@ -28,33 +28,13 @@
     </head>
     <body class="flex-container">
     <div class="site-content">
-
-        <nav class="navbar navbar-default dark" role="navigation">
-            <div class="container">
-             <a href="https://www.mozilla.org/" id="tabzilla">mozilla</a>
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="main-navbar">
-                <ul role="menu"  class="nav navbar-nav">
-                    <li role="menuitem"><a href="//www.mozilla.org/en-US/mission/">Mission</a></li>
-                    <li role="menuitem"><a href="//www.mozilla.org/en-US/about/">About</a></li>
-                    <li role="menuitem"><a href="//www.mozilla.org/en-US/products/">Products</a></li>
-                    <li role="menuitem" class="last"><a href="//www.mozilla.org/en-US/contribute/">Get Involved</a></li>
-                </ul>
-                </div>
-            </div>
-        </nav>
         <div class="container">
             {% block site_header %}
             {% block breadcrumbs %}
             <div class="jumbotron">
                 <h1><a href="/">
                  <img alt="Brand" src="{% static 'images/logo@2x.png' %}" width="60px">
-                {{ current_site.name }}
+                {{ current_site.name }} Status
                 </a></h1>
             </div>
             {% endblock %}
@@ -68,56 +48,10 @@
         </div>
         </div>
         {% block site_footer %}
-        <footer id="colophon" class="footer">
-            <div class="container">
-            <nav class="row">
-                <div class="col-md-7">
-                    <h1 class="logo"><a href="/en-US/">Mozilla</a></h1>
-                    <p class="license">Portions of this content are &copy;1998–2014 by individual mozilla.org contributors. <br> Content available under a <a href="/en-US/foundation/licensing/website-content/">Creative Commons license</a>.</p>
-                </div>
-                <div class="col-md-3">
-                    <ul class="links-join">
-                        <li><a href="/en-US/contact/spaces/">Contact Us</a></li>
-                        <li class="wrap"><a href="/en-US/about/partnerships/">Partner with Us</a></li>
-                        <li class="clear"><a href="//sendto.mozilla.org/page/contribute/Give-Now" class="donate">Donate</a></li>
-                        <li class="wrap"><a href="//affiliates.mozilla.org/">Firefox Affiliates</a></li>
-                        <li class="clear"><a href="/en-US/contribute/page/">Contribute to this page</a></li>
-                    </ul>
-                    <ul class="links-legal">
-                        <li><a href="/en-US/privacy/">Privacy</a></li>
-                        <li class="wrap"><a href="/en-US/privacy/websites/#cookies">Cookies</a></li>
-                        <li class="wrap"><a href="/en-US/about/legal/">Legal</a></li>
-                        <li class="clear"><a href="/en-US/about/legal/fraud-report/">Report Trademark Abuse</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-2">
-                    <ul class="links-social">
-                        <li>
-                            Mozilla:
-                            <ul>
-                                <li><a href="//twitter.com/mozilla">Twitter<span> (@mozilla)</span></a></li>
-                                <li><a href="//www.facebook.com/mozilla">Facebook<span> (Mozilla)</span></a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            Firefox:
-                            <ul>
-                                <li><a href="//twitter.com/firefox">Twitter<span> (@firefox)</span></a></li>
-                                <li><a href="//www.facebook.com/Firefox">Facebook<span> (Firefox)</span></a></li>
-                                <li><a href="//www.youtube.com/firefoxchannel">YouTube<span> (firefoxchannel)</span></a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <div class="lang-switcher">
-                    </div>
-                </div>
-            </nav>
-            </div>
-        </footer>
         {% endblock %}
     {% block js %}
     <script src="{% static 'js/libs/jquery-2.1.1.min.js' %}"></script>
-    <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script>
+<!--    <script src="//mozorg.cdn.mozilla.net/tabzilla/tabzilla.js"></script> -->
     <script src="{% static 'js/libs/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/site.js' %}"></script>
     {% endblock %}
